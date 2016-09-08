@@ -15,6 +15,8 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
     
     
     var dbRef:FIRDatabaseReference!
+    var usersFrigesNames: [String]!
+    var usersFriges: [Frige]!
     var FrigesCollectionView: UICollectionView!
     var ListCollectionView: UICollectionView!
     
@@ -73,8 +75,9 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         super.viewDidLoad()
         
         dbRef = FIRDatabase.database().reference().child("Friges")
+        //sendFirstFrige()
+        ObserveUserFrige()
         //startObservingDB()
-        
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
         
         let FrigeLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -155,26 +158,69 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         }
         
     }
-    /*
-    func startObservingDB(){
-        dbRef.observeEventType(.Value, withBlock: { (snapshot:FIRDataSnapshot) in
-            var newfriges = [Frige]()
-            for frige in snapshot.children{
-                let frigeObject = Frige(snapshot:frige as! FIRDataSnapshot)
-                newSweets.append(sweetObject)
+    
+    func sendFirstFrige(){
+        FIRDatabase.database().reference().child("Friges").observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+            let frige = Frige(name:"First", members: ["me": "myself", "and" : "I"], lists:["POINT": "ER", "TO" : "IT"])
+            FIRDatabase.database().reference().child("Friges").childByAutoId().setValue(frige.toAnyObject())
+        })
+
+        
+        
+        
+    }
+    
+    func ObserveUserFrige(){
+        FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observeSingleEventOfType(.Value, withBlock: { (snapshot:FIRDataSnapshot) in
+            var newFrigeNames = [String]()
+            
+            //print(snapshot.value!)
+            for frigeName in snapshot.value as! NSDictionary{
+                //print(frigeName.key,frigeName.value)
+                
+                newFrigeNames.append(frigeName.value as! String)
             }
-            self.sweets = newSweets
+            self.usersFrigesNames = newFrigeNames
+            /*
             if self.tableView.indexPathForSelectedRow != nil {
                 self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
                 self.tableView.deselectRowAtIndexPath(self.tableView.indexPathForSelectedRow!, animated: true)
             }
-            self.tableView.reloadData()
+             */
+            self.FrigesCollectionView.reloadData()
+            
+            
+            //self.ListCollectionView.reloadData()
+        }) { (error:NSError) in
+            print(error.description)
+        }
+        startObservingDB()
+    }
+    
+    func startObservingDB(){
+        FIRDatabase.database().reference().child("Friges").observeEventType(.Value, withBlock: { (snapshot:FIRDataSnapshot) in
+            var newfriges = [Frige]()
+            for frige in self.usersFrigesNames{
+                
+                let frigeObject = Frige(snapshot:snapshot.childSnapshotForPath(frige))
+                newfriges.append(frigeObject)
+            }
+            self.usersFriges = newfriges
+            /*
+             if self.tableView.indexPathForSelectedRow != nil {
+             self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
+             self.tableView.deselectRowAtIndexPath(self.tableView.indexPathForSelectedRow!, animated: true)
+             }
+             */
+            print(self.usersFriges)
+            self.FrigesCollectionView.reloadData()
+            //self.ListCollectionView.reloadData()
         }) { (error:NSError) in
             print(error.description)
         }
         
     }
-    */
+    
     func handleAddList()  {
         
     }

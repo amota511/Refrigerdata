@@ -13,11 +13,11 @@ struct Frige {
     
     let key:String!
     let name:String!
-    let members: [String]?
-    let lists: [String]?
+    let members: [String : String]?
+    let lists: [String : String]?
     let itemRef:FIRDatabaseReference?
     
-    init(name:String, members:[String], key:String = "", lists:[String]) {
+    init(name:String, members:[String : String], key:String = "", lists:[String : String]) {
         self.key = key
         self.name = name
         self.members = members
@@ -34,12 +34,12 @@ struct Frige {
         }else{
             name = ""
         }
-        if let frigeMembers = snapshot.value!["members"] as? [String]{
+        if let frigeMembers = snapshot.value!["members"] as? [String : String]{
             members = frigeMembers
         }else{
-            members = []
+            members = nil
         }
-        if let frigeList = snapshot.value!["list"] as? [String]?{
+        if let frigeList = snapshot.value!["list"] as? [String : String]?{
             lists = frigeList
         }else{
             lists = nil
@@ -48,7 +48,7 @@ struct Frige {
     
     }
  
-    func toAnyObject()-> AnyObject {
+    func toAnyObject()-> [NSObject : AnyObject] {
         return["name":name, "members": members!, "lists": lists!]
     }
 }
