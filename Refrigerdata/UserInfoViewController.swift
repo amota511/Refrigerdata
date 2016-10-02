@@ -213,7 +213,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     }
     
     func handleLogin(){
-        guard let email = emailTextField.text, password = passwordTextField.text else{
+        guard let email = emailTextField.text, let password = passwordTextField.text else{
             print("Form Is Not Valid")
             return
         }
@@ -228,7 +228,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     }
     
     func handleRegister(){
-        guard let email = emailTextField.text, password = passwordTextField.text, name = nameTextField.text else{
+        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else{
             print("Form Is Not Valid")
             return
         }
