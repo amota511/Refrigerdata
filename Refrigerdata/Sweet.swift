@@ -32,33 +32,33 @@ struct Sweet {
         key = snapshot.key
         itemRef = snapshot.ref
         
-        if let sweetContent = snapshot.value!["content"] as? String{
+        if let sweetContent = snapshot.value(forKey:"content") as? String{
             content = sweetContent
         }else{
             content = ""
         }
-        if let sweetUser = snapshot.value!["addedByUser"] as? String{
+        if let sweetUser = snapshot.value(forKey:"addedByUser") as? String{
             addedByUser = sweetUser
         }else{
             addedByUser = ""
         }
-        if let sweetOwned = snapshot.value!["owned"] as? Bool{
+        if let sweetOwned = snapshot.value(forKey:"owned") as? Bool{
             owned = sweetOwned
         }else{
             owned = false
         }
-        if let sweetOwnedBy = snapshot.value!["ownedBy"] as? String{
+        if let sweetOwnedBy = snapshot.value(forKey:"ownedBy") as? String{
             ownedBy = sweetOwnedBy
         }else{
             ownedBy = ""
         }
-        if let sweetChecked = snapshot.value!["checked"] as? Bool{
+        if let sweetChecked = snapshot.value(forKey:"checked") as? Bool{
             checked = sweetChecked
         }else{
             checked = false
         }
     }
-    func toAnyObject()-> AnyObject {
-        return["content":content, "addedByUser":addedByUser, "owned":owned, "ownedBy":ownedBy!, "checked":checked]
+    func toAnyObject()-> [String : AnyObject] {
+        return["content": content as AnyObject, "addedByUser": addedByUser as AnyObject, "owned": owned as AnyObject, "ownedBy": ownedBy! as AnyObject, "checked": checked as AnyObject]
     }
 }

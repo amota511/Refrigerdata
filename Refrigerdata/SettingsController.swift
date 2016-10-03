@@ -32,7 +32,7 @@ class SettingsController: UIViewController {
     let SettingsLabel:UILabel = {
         let label = UILabel()
         label.text = "Settings"
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -43,7 +43,7 @@ class SettingsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
         
         
@@ -69,38 +69,38 @@ class SettingsController: UIViewController {
         nameView.addSubview(nameViewBubble)
         
         
-        nameView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        nameView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: view.frame.height * 1/5).active = true
-        nameView.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/1.25).active = true
-        nameView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, multiplier: 1/16).active = true
-        nameViewBubble.leftAnchor.constraintEqualToAnchor(nameView.leftAnchor).active = true
-        nameViewBubble.centerYAnchor.constraintEqualToAnchor(nameView.centerYAnchor).active = true
-        nameViewBubble.widthAnchor.constraintEqualToAnchor(nameView.widthAnchor, multiplier: 1/6).active = true
-        nameViewBubble.heightAnchor.constraintEqualToAnchor(nameView.heightAnchor).active = true
+        nameView.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
+        nameView.topAnchor.constraint(equalTo:view.topAnchor, constant: view.frame.height * 1/5).isActive = true
+        nameView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1/1.25).isActive = true
+        nameView.heightAnchor.constraint(equalTo:view.heightAnchor, multiplier: 1/16).isActive = true
+        nameViewBubble.leftAnchor.constraint(equalTo:nameView.leftAnchor).isActive = true
+        nameViewBubble.centerYAnchor.constraint(equalTo:nameView.centerYAnchor).isActive = true
+        nameViewBubble.widthAnchor.constraint(equalTo:nameView.widthAnchor, multiplier: 1/6).isActive = true
+        nameViewBubble.heightAnchor.constraint(equalTo:nameView.heightAnchor).isActive = true
         
         
         
         
-        nameView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        nameView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: view.frame.height * 1/5).active = true
-        nameView.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/1.25).active = true
-        nameView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, multiplier: 1/16).active = true
-        nameViewBubble.leftAnchor.constraintEqualToAnchor(nameView.leftAnchor).active = true
-        nameViewBubble.centerYAnchor.constraintEqualToAnchor(nameView.centerYAnchor).active = true
-        nameViewBubble.widthAnchor.constraintEqualToAnchor(nameView.widthAnchor, multiplier: 1/6).active = true
-        nameViewBubble.heightAnchor.constraintEqualToAnchor(nameView.heightAnchor).active = true
+        nameView.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
+        nameView.topAnchor.constraint(equalTo:view.topAnchor, constant: view.frame.height * 1/5).isActive = true
+        nameView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1/1.25).isActive = true
+        nameView.heightAnchor.constraint(equalTo:view.heightAnchor, multiplier: 1/16).isActive = true
+        nameViewBubble.leftAnchor.constraint(equalTo:nameView.leftAnchor).isActive = true
+        nameViewBubble.centerYAnchor.constraint(equalTo:nameView.centerYAnchor).isActive = true
+        nameViewBubble.widthAnchor.constraint(equalTo:nameView.widthAnchor, multiplier: 1/6).isActive = true
+        nameViewBubble.heightAnchor.constraint(equalTo:nameView.heightAnchor).isActive = true
         
         
         
         
-        nameView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        nameView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: view.frame.height * 1/5).active = true
-        nameView.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/1.25).active = true
-        nameView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, multiplier: 1/16).active = true
-        nameViewBubble.leftAnchor.constraintEqualToAnchor(nameView.leftAnchor).active = true
-        nameViewBubble.centerYAnchor.constraintEqualToAnchor(nameView.centerYAnchor).active = true
-        nameViewBubble.widthAnchor.constraintEqualToAnchor(nameView.widthAnchor, multiplier: 1/6).active = true
-        nameViewBubble.heightAnchor.constraintEqualToAnchor(nameView.heightAnchor).active = true
+        nameView.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
+        nameView.topAnchor.constraint(equalTo:view.topAnchor, constant: view.frame.height * 1/5).isActive = true
+        nameView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1/1.25).isActive = true
+        nameView.heightAnchor.constraint(equalTo:view.heightAnchor, multiplier: 1/16).isActive = true
+        nameViewBubble.leftAnchor.constraint(equalTo:nameView.leftAnchor).isActive = true
+        nameViewBubble.centerYAnchor.constraint(equalTo:nameView.centerYAnchor).isActive = true
+        nameViewBubble.widthAnchor.constraint(equalTo:nameView.widthAnchor, multiplier: 1/6).isActive = true
+        nameViewBubble.heightAnchor.constraint(equalTo:nameView.heightAnchor).isActive = true
         
     }
     

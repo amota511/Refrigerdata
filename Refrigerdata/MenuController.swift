@@ -20,67 +20,67 @@ class MenuController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = UIColor(r: 100, g: 200, b: 100)
-        titleCell.backgroundColor = UIColor.clearColor()
+        titleCell.backgroundColor = UIColor.clear
         
-        tablesCell.selectionStyle = .None
-        settingsCell.selectionStyle = .None
-        logoutCell.selectionStyle = .None
-        titleCell.selectionStyle = .None
+        tablesCell.selectionStyle = .none
+        settingsCell.selectionStyle = .none
+        logoutCell.selectionStyle = .none
+        titleCell.selectionStyle = .none
         
         let Menu = UILabel()
         Menu.text = "MENU"
-        Menu.textColor = UIColor.whiteColor()
-        Menu.textAlignment = .Center
+        Menu.textColor = UIColor.white
+        Menu.textAlignment = .center
         Menu.translatesAutoresizingMaskIntoConstraints = false
         titleCell.addSubview(Menu)
         
-        Menu.centerXAnchor.constraintEqualToAnchor(titleCell.centerXAnchor, constant: -26).active = true
-        Menu.centerYAnchor.constraintEqualToAnchor(titleCell.centerYAnchor).active = true
-        Menu.widthAnchor.constraintEqualToAnchor(titleCell.widthAnchor, multiplier: 1/5).active = true
-        Menu.heightAnchor.constraintEqualToAnchor(titleCell.heightAnchor, multiplier: 3/4).active = true
+        Menu.centerXAnchor.constraint(equalTo:titleCell.centerXAnchor, constant: -26).isActive = true
+        Menu.centerYAnchor.constraint(equalTo:titleCell.centerYAnchor).isActive = true
+        Menu.widthAnchor.constraint(equalTo:titleCell.widthAnchor, multiplier: 1/5).isActive = true
+        Menu.heightAnchor.constraint(equalTo:titleCell.heightAnchor, multiplier: 3/4).isActive = true
         
         let Tables = UILabel()
         Tables.text = "Friges"
         Tables.textColor = UIColor(r: 85, g: 120, b: 85)
-        Tables.textAlignment = .Center
+        Tables.textAlignment = .center
         Tables.translatesAutoresizingMaskIntoConstraints = false
         tablesCell.addSubview(Tables)
         
-        Tables.leftAnchor.constraintEqualToAnchor(tablesCell.leftAnchor, constant: -5).active = true
-        Tables.centerYAnchor.constraintEqualToAnchor(tablesCell.centerYAnchor).active = true
-        Tables.widthAnchor.constraintEqualToAnchor(tablesCell.widthAnchor, multiplier: 1/3).active = true
-        Tables.heightAnchor.constraintEqualToAnchor(tablesCell.heightAnchor).active = true
+        Tables.leftAnchor.constraint(equalTo:tablesCell.leftAnchor, constant: -5).isActive = true
+        Tables.centerYAnchor.constraint(equalTo:tablesCell.centerYAnchor).isActive = true
+        Tables.widthAnchor.constraint(equalTo:tablesCell.widthAnchor, multiplier: 1/3).isActive = true
+        Tables.heightAnchor.constraint(equalTo:tablesCell.heightAnchor).isActive = true
         
         let Settings = UILabel()
         Settings.text = "Settings"
         Settings.textColor = UIColor(r: 85, g: 120, b: 85)
-        Settings.textAlignment = .Center
+        Settings.textAlignment = .center
         Settings.translatesAutoresizingMaskIntoConstraints = false
         settingsCell.addSubview(Settings)
         
-        Settings.leftAnchor.constraintEqualToAnchor(settingsCell.leftAnchor).active = true
-        Settings.centerYAnchor.constraintEqualToAnchor(settingsCell.centerYAnchor).active = true
-        Settings.widthAnchor.constraintEqualToAnchor(settingsCell.widthAnchor, multiplier: 1/3).active = true
-        Settings.heightAnchor.constraintEqualToAnchor(settingsCell.heightAnchor).active = true
+        Settings.leftAnchor.constraint(equalTo:settingsCell.leftAnchor).isActive = true
+        Settings.centerYAnchor.constraint(equalTo:settingsCell.centerYAnchor).isActive = true
+        Settings.widthAnchor.constraint(equalTo:settingsCell.widthAnchor, multiplier: 1/3).isActive = true
+        Settings.heightAnchor.constraint(equalTo:settingsCell.heightAnchor).isActive = true
         
         let logout = UIButton()
-        logout.setTitle("Logout", forState: .Normal)
+        logout.setTitle("Logout", for: .normal)
         logout.translatesAutoresizingMaskIntoConstraints = false
-        logout.setTitleColor(UIColor(r: 85, g: 120, b: 85), forState: .Normal)
-        logout.addTarget(self, action: #selector(handleLogout), forControlEvents: .TouchUpInside)
+        logout.setTitleColor(UIColor(r: 85, g: 120, b: 85), for: .normal)
+        logout.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
         logoutCell.addSubview(logout)
         
-        logout.leftAnchor.constraintEqualToAnchor(logoutCell.leftAnchor).active = true
-        logout.centerYAnchor.constraintEqualToAnchor(logoutCell.centerYAnchor).active = true
-        logout.widthAnchor.constraintEqualToAnchor(logoutCell.widthAnchor, multiplier: 1/3).active = true
-        logout.heightAnchor.constraintEqualToAnchor(logoutCell.heightAnchor).active = true
+        logout.leftAnchor.constraint(equalTo:logoutCell.leftAnchor).isActive = true
+        logout.centerYAnchor.constraint(equalTo:logoutCell.centerYAnchor).isActive = true
+        logout.widthAnchor.constraint(equalTo:logoutCell.widthAnchor, multiplier: 1/3).isActive = true
+        logout.heightAnchor.constraint(equalTo:logoutCell.heightAnchor).isActive = true
         
     }
 
     func handleLogout(){
         do{
         try FIRAuth.auth()?.signOut()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
             
         }catch let logoutError {
             print(logoutError)

@@ -22,35 +22,35 @@ class Sweets: UITableViewController {
     
     lazy var ownItButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Mine!", forState: .Normal)
+        button.setTitle("Mine!", for: .normal)
         button.backgroundColor = UIColor(r: 90, g: 190, b: 90)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.clipsToBounds = true
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleOwnIt), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(handleOwnIt), for: .touchUpInside)
     return button
     }()
     
     lazy var deleteButton: UIButton = {
         let button = UIButton()
         //let image = UIImage(named: "white_X")
-        button.setTitle("X", forState: .Normal)
+        button.setTitle("X", for: .normal)
         button.backgroundColor = UIColor(r: 90, g: 190, b: 90)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.clipsToBounds = true
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleDelete), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(handleDelete), for: .touchUpInside)
         return button
     }()
     
     lazy var checkButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Check", forState: .Normal)
+        button.setTitle("Check", for: .normal)
         button.backgroundColor = UIColor(r: 90, g: 190, b: 90)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.clipsToBounds = true
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleCheck), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(handleCheck), for: .touchUpInside)
         return button
     }()
     
@@ -70,11 +70,11 @@ class Sweets: UITableViewController {
         startObservingDB()
         
         let userID = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
-            self.usersName = snapshot.value?.objectForKey("name") as! String
+        FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
+            self.usersName = snapshot.value(forKey: "name") as! String
         })
        
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
         
         if self.revealViewController() != nil {
@@ -87,7 +87,7 @@ class Sweets: UITableViewController {
     }
 
     func startObservingDB(){
-        dbRef.observeEventType(.Value, withBlock: { (snapshot:FIRDataSnapshot) in
+        dbRef.observe(.value, with: { (snapshot:FIRDataSnapshot) in
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
                 let sweetObject = Sweet(snapshot:sweet as! FIRDataSnapshot)
@@ -95,12 +95,13 @@ class Sweets: UITableViewController {
             }
             self.sweets = newSweets
             if self.tableView.indexPathForSelectedRow != nil {
-                self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
-                self.tableView.deselectRowAtIndexPath(self.tableView.indexPathForSelectedRow!, animated: true)
+                //self.tableView(tableView: self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
+                //self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
+                self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
             }
                 self.tableView.reloadData()
-        }) { (error:NSError) in
-                print(error.description)
+        }) { (error: Error) in
+                print(error.localizedDescription)
         }
         
     }
@@ -108,113 +109,116 @@ class Sweets: UITableViewController {
     
     
     @IBAction func addSweet(sender: AnyObject) {
-        let sweetAlert = UIAlertController(title: "New Item", message: "Enter Your Item", preferredStyle: .Alert)
+        let sweetAlert = UIAlertController(title: "New Item", message: "Enter Your Item", preferredStyle: .alert)
         if self.tableView.indexPathForSelectedRow != nil {
-            self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
-            self.tableView.deselectRowAtIndexPath(self.tableView.indexPathForSelectedRow!, animated: true)
+            self.tableView.deselectRow(at:self.tableView.indexPathForSelectedRow!, animated: true)
         }
-        sweetAlert.addTextFieldWithConfigurationHandler{
+        sweetAlert.addTextField{
             (textField:UITextField) in
             textField.placeholder = "Your Item"
-            textField.autocapitalizationType = .Words
+            textField.autocapitalizationType = .words
         }
-        sweetAlert.addAction(UIAlertAction(title: "Send", style: .Default, handler: {(UIAlertAction) in
+        sweetAlert.addAction(UIAlertAction(title: "Send", style: .default, handler: {(UIAlertAction) in
             if let sweetContent = sweetAlert.textFields?.first?.text{
                 let userID = FIRAuth.auth()?.currentUser?.uid
-                FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+                FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
                     let sweet = Sweet(content: sweetContent, addedByUser: self.usersName)
-                    let sweetRef = self.dbRef.child(sweetContent.lowercaseString)
+                    let sweetRef = self.dbRef.child(sweetContent.lowercased())
                     sweetRef.setValue(sweet.toAnyObject())
                 })
             }
         
         }))
         
-        sweetAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (UIAlertAction) in
-            sweetAlert.dismissViewControllerAnimated(false, completion: nil)
+        sweetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            sweetAlert.dismiss(animated:false, completion: nil)
         }))
         
-        self.presentViewController(sweetAlert, animated: true, completion: nil)
+        self.present(sweetAlert, animated: true, completion: nil)
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
+    
+    /*
+     override func preferredStatusBarStyle() -> UIStatusBarStyle {
+     return .lightContent
+     }
+     */
+    
     // MARK: - Table view data source
-
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return sweets.count
     }
     
-    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        if tableView.indexPathForSelectedRow == indexPath {
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        if tableView.indexPathForSelectedRow! == indexPath as IndexPath {
             AnyRowIsSelected = true
             rowIsSelected = true
         }
         return indexPath
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let cell = tableView.cellForRowAtIndexPath(indexPath) as! RefrigerdataCell
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath as IndexPath) as! RefrigerdataCell
         
         if rowIsSelected == false {
         cell.backgroundColor = UIColor(r: 120, g: 220, b: 120)
-        cell.item.textColor = UIColor.whiteColor()
-        cell.detail.textColor = UIColor.whiteColor()
+        cell.item.textColor = UIColor.white
+        cell.detail.textColor = UIColor.white
         
         cell.addSubview(coverView)
         coverView.addSubview(ownItButton)
         coverView.addSubview(checkButton)
         coverView.addSubview(deleteButton)
             
-        coverView.leftAnchor.constraintEqualToAnchor(cell.centerXAnchor, constant: -10).active = true
-        coverView.centerYAnchor.constraintEqualToAnchor(cell.centerYAnchor).active = true
-        coverView.rightAnchor.constraintEqualToAnchor(cell.rightAnchor).active = true
-        coverView.heightAnchor.constraintEqualToAnchor(cell.heightAnchor).active = true
+        coverView.leftAnchor.constraint(equalTo:cell.centerXAnchor, constant: -10).isActive = true
+        coverView.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+        coverView.rightAnchor.constraint(equalTo:cell.rightAnchor).isActive = true
+        coverView.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
         
-        ownItButton.leftAnchor.constraintEqualToAnchor(cell.centerXAnchor).active = true
-        ownItButton.centerYAnchor.constraintEqualToAnchor(cell.centerYAnchor).active = true
-        ownItButton.widthAnchor.constraintEqualToAnchor(cell.widthAnchor, multiplier: 1/7).active = true
-        ownItButton.heightAnchor.constraintEqualToAnchor(cell.heightAnchor, multiplier: 3/4).active = true
+        ownItButton.leftAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
+        ownItButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+        ownItButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
+        ownItButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
         
-        checkButton.leftAnchor.constraintEqualToAnchor(ownItButton.rightAnchor, constant: 2).active = true
-        checkButton.centerYAnchor.constraintEqualToAnchor(cell.centerYAnchor).active = true
-        checkButton.rightAnchor.constraintEqualToAnchor(deleteButton.leftAnchor, constant: -2).active = true
-        checkButton.heightAnchor.constraintEqualToAnchor(cell.heightAnchor, multiplier: 3/4).active = true
+        checkButton.leftAnchor.constraint(equalTo:ownItButton.rightAnchor, constant: 2).isActive = true
+        checkButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+        checkButton.rightAnchor.constraint(equalTo:deleteButton.leftAnchor, constant: -2).isActive = true
+        checkButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
         
-        deleteButton.rightAnchor.constraintEqualToAnchor(cell.rightAnchor, constant: -2).active = true
-        deleteButton.centerYAnchor.constraintEqualToAnchor(cell.centerYAnchor).active = true
-        deleteButton.widthAnchor.constraintEqualToAnchor(cell.widthAnchor, multiplier: 1/7).active = true
-        deleteButton.heightAnchor.constraintEqualToAnchor(cell.heightAnchor, multiplier: 3/4).active = true
+        deleteButton.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
+        deleteButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+        deleteButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
+        deleteButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
         rowIsSelected = true
             
         }else{
             
-            cell.backgroundColor = UIColor.whiteColor()
-            cell.item.textColor = UIColor.blackColor()
-            cell.detail.textColor = UIColor.blackColor()
+            cell.backgroundColor = UIColor.white
+            cell.item.textColor = UIColor.black
+            cell.detail.textColor = UIColor.black
             coverView.removeFromSuperview()
             ownItButton.removeFromSuperview()
             checkButton.removeFromSuperview()
             deleteButton.removeFromSuperview()
             
             /*
-            cell.item.rightAnchor.constraintEqualToAnchor(cell.centerXAnchor, constant: -2).active = true
-            cell.detail.rightAnchor.constraintEqualToAnchor(cell.centerXAnchor, constant: -2).active = true
+            cell.item.rightAnchor.constraint(equalTo:cell.centerXAnchor, constant: -2).isActive = true
+            cell.detail.rightAnchor.constraint(equalTo:cell.centerXAnchor, constant: -2).isActive = true
             */
  
             rowIsSelected = false
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            tableView.deselectRow(at:indexPath as IndexPath, animated: true)
             let sweet = sweets[indexPath.row]
             if sweet.owned == true{
                 if sweet.ownedBy == self.usersName {
@@ -225,14 +229,14 @@ class Sweets: UITableViewController {
                     cell.detail.textColor = UIColor(r: 100, g: 200, b: 100)
                 }
             }else{
-                cell.item.textColor = UIColor.blackColor()
-                cell.detail.textColor = UIColor.blackColor()
+                cell.item.textColor = UIColor.black
+                cell.detail.textColor = UIColor.black
             }
         }
     }
     
-    override func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-        let cell = tableView.cellForRowAtIndexPath(indexPath) as! RefrigerdataCell
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath as IndexPath) as! RefrigerdataCell
         
         
         coverView.removeFromSuperview()
@@ -241,8 +245,8 @@ class Sweets: UITableViewController {
         deleteButton.removeFromSuperview()
         
         /*
-        cell.item.rightAnchor.constraintEqualToAnchor(cell.rightAnchor, constant: -2).active = true
-        cell.detail.rightAnchor.constraintEqualToAnchor(cell.rightAnchor, constant: -2).active = true
+        cell.item.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
+        cell.detail.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
         */
         
  
@@ -256,34 +260,34 @@ class Sweets: UITableViewController {
                 cell.detail.textColor = UIColor(r: 100, g: 200, b: 100)
             }
         }else{
-            cell.item.textColor = UIColor.blackColor()
-            cell.detail.textColor = UIColor.blackColor()
+            cell.item.textColor = UIColor.black
+            cell.detail.textColor = UIColor.black
         }
         
-        cell.backgroundColor = UIColor.whiteColor()
+        cell.backgroundColor = UIColor.white
         rowIsSelected = false
         
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! RefrigerdataCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath as IndexPath as IndexPath) as! RefrigerdataCell
         let sweet = sweets[indexPath.row]
         
         
-        cell.selectionStyle = .None
+        cell.selectionStyle = .none
         
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at:indexPath as IndexPath, animated: true)
         cell.item.translatesAutoresizingMaskIntoConstraints = false
         cell.item.text = sweet.content
         cell.addSubview(cell.item)
-        cell.item.leftAnchor.constraintEqualToAnchor(cell.leftAnchor, constant: 24).active = true
-        cell.item.bottomAnchor.constraintEqualToAnchor(cell.centerYAnchor, constant: 5).active = true
-        cell.item.rightAnchor.constraintEqualToAnchor(cell.rightAnchor, constant: -2).active = true
-        cell.item.topAnchor.constraintEqualToAnchor(cell.topAnchor).active = true
+        cell.item.leftAnchor.constraint(equalTo:cell.leftAnchor, constant: 24).isActive = true
+        cell.item.bottomAnchor.constraint(equalTo:cell.centerYAnchor, constant: 5).isActive = true
+        cell.item.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
+        cell.item.topAnchor.constraint(equalTo:cell.topAnchor).isActive = true
         
         
         cell.detail.translatesAutoresizingMaskIntoConstraints = false
-        cell.detail.font = cell.detail.font.fontWithSize(10)
+        cell.detail.font = cell.detail.font.withSize(10)
         
         
         let owned = sweet.owned
@@ -301,8 +305,8 @@ class Sweets: UITableViewController {
             }
         }else{
             cell.detail.text = "Added by: \(sweet.addedByUser)"
-            cell.item.textColor = UIColor.blackColor()
-            cell.detail.textColor = UIColor.blackColor()
+            cell.item.textColor = UIColor.black
+            cell.detail.textColor = UIColor.black
         }
         
         let checked = sweet.checked
@@ -328,16 +332,16 @@ class Sweets: UITableViewController {
         
         
         cell.addSubview(cell.detail)
-        cell.detail.leftAnchor.constraintEqualToAnchor(cell.leftAnchor, constant: 24).active = true
-        cell.detail.bottomAnchor.constraintEqualToAnchor(cell.bottomAnchor).active = true
-        cell.detail.rightAnchor.constraintEqualToAnchor(cell.rightAnchor, constant: -2).active = true
-        cell.detail.topAnchor.constraintEqualToAnchor(cell.item.bottomAnchor).active = true
+        cell.detail.leftAnchor.constraint(equalTo:cell.leftAnchor, constant: 24).isActive = true
+        cell.detail.bottomAnchor.constraint(equalTo:cell.bottomAnchor).isActive = true
+        cell.detail.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
+        cell.detail.topAnchor.constraint(equalTo:cell.item.bottomAnchor).isActive = true
         
         return cell
     }
  
     func handleOwnIt(){
-        let cell = self.tableView.cellForRowAtIndexPath((self.tableView.indexPathForSelectedRow)!) as! RefrigerdataCell
+        let cell = self.tableView.cellForRow(at: (self.tableView.indexPathForSelectedRow)!) as! RefrigerdataCell
         var sweet = sweets[(self.tableView.indexPathForSelectedRow?.row)!]
 
         if sweet.owned == true {
@@ -346,7 +350,7 @@ class Sweets: UITableViewController {
             sweet.owned = true
             sweet.ownedBy = self.usersName
             
-            dbRef.child(sweet.content.lowercaseString).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
+            dbRef.child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
                 if err != nil {
                     print(err)
                     return
@@ -360,32 +364,32 @@ class Sweets: UITableViewController {
         let sweet = sweets[(self.tableView.indexPathForSelectedRow?.row)!]
         let ownedBy = sweet.ownedBy
         if ownedBy == usersName {
-            let ownedAlert = UIAlertController(title: "Already Yours 😁", message: nil, preferredStyle: .ActionSheet)
-            ownedAlert.addAction(UIAlertAction(title: "Oh Yeah! 😅", style: .Cancel, handler: { (UIAlertAction) in
-                ownedAlert.dismissViewControllerAnimated(true, completion: nil)
+            let ownedAlert = UIAlertController(title: "Already Yours 😁", message: nil, preferredStyle: .actionSheet)
+            ownedAlert.addAction(UIAlertAction(title: "Oh Yeah! 😅", style: .cancel, handler: { (UIAlertAction) in
+                ownedAlert.dismiss(animated:true, completion: nil)
             }))
-            self.presentViewController(ownedAlert, animated: true, completion: nil)
+            self.present(ownedAlert, animated: true, completion: nil)
         }else{
-            let ownedAlert = UIAlertController(title: "Item already owned 😅", message: nil, preferredStyle: .ActionSheet)
-            ownedAlert.addAction(UIAlertAction(title: "Fine!", style: .Cancel, handler: { (UIAlertAction) in
-                ownedAlert.dismissViewControllerAnimated(true, completion: nil)
+            let ownedAlert = UIAlertController(title: "Item already owned 😅", message: nil, preferredStyle: .actionSheet)
+            ownedAlert.addAction(UIAlertAction(title: "Fine!", style: .cancel, handler: { (UIAlertAction) in
+                ownedAlert.dismiss(animated:true, completion: nil)
             }))
-            self.presentViewController(ownedAlert, animated: true, completion: nil)
+            self.present(ownedAlert, animated: true, completion: nil)
         }
         
     }
 
     func handleDelete(){
-        let cell = self.tableView.cellForRowAtIndexPath((self.tableView.indexPathForSelectedRow)!) as! RefrigerdataCell
+        let cell = self.tableView.cellForRow(at: (self.tableView.indexPathForSelectedRow)!) as! RefrigerdataCell
         let item = cell.item.text!
-        let sweetAlert = UIAlertController(title: "Are you sure you want to delete \(item) from this list?", message: nil, preferredStyle: .Alert)
+        let sweetAlert = UIAlertController(title: "Are you sure you want to delete \(item) from this list?", message: nil, preferredStyle: .alert)
         
-        sweetAlert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: {(UIAlertAction) in
+        sweetAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {(UIAlertAction) in
             
             
                 let sweet = self.sweets[(self.tableView.indexPathForSelectedRow?.row)!]
-                let sweetRef = self.dbRef.child(sweet.content.lowercaseString)
-                sweetRef.removeValueWithCompletionBlock({ (err, ref) in
+                let sweetRef = self.dbRef.child(sweet.content.lowercased())
+                sweetRef.removeValue(completionBlock: { (err, ref) in
                     if err != nil {
                         print(err)
                         return
@@ -393,11 +397,11 @@ class Sweets: UITableViewController {
                 })
         }))
         
-        sweetAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (UIAlertAction) in
-            sweetAlert.dismissViewControllerAnimated(false, completion: nil)
+        sweetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            sweetAlert.dismiss(animated:false, completion: nil)
         }))
         
-        self.presentViewController(sweetAlert, animated: true, completion: nil)
+        self.present(sweetAlert, animated: true, completion: nil)
         
     }
     
@@ -406,7 +410,7 @@ class Sweets: UITableViewController {
         
       if sweet.checked != true {
         sweet.checked = true
-        dbRef.child(sweet.content.lowercaseString).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        dbRef.child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 return
@@ -414,7 +418,7 @@ class Sweets: UITableViewController {
         })
       }else{
         sweet.checked = false
-        dbRef.child(sweet.content.lowercaseString).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        dbRef.child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 return
@@ -475,13 +479,13 @@ class Sweets: UITableViewController {
 extension UIFont {
     
     func withTraits(traits:UIFontDescriptorSymbolicTraits...) -> UIFont {
-        let descriptor = self.fontDescriptor()
-            .fontDescriptorWithSymbolicTraits(UIFontDescriptorSymbolicTraits(traits))
-        return UIFont(descriptor: descriptor, size: 0)
+        let descriptor = self.fontDescriptor
+            .withSymbolicTraits(UIFontDescriptorSymbolicTraits(traits))
+        return UIFont(descriptor: descriptor!, size: 0)
     }
     
     func boldItalic() -> UIFont {
-        return withTraits(.TraitBold, .TraitCondensed)
+        return withTraits(traits: .traitBold, .traitCondensed)
     }
     
 }
