@@ -79,8 +79,6 @@ class SettingsController: UIViewController {
         nameViewBubble.heightAnchor.constraint(equalTo:nameView.heightAnchor).isActive = true
         
         
-        
-        
         nameView.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
         nameView.topAnchor.constraint(equalTo:view.topAnchor, constant: view.frame.height * 1/5).isActive = true
         nameView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1/1.25).isActive = true
@@ -89,8 +87,6 @@ class SettingsController: UIViewController {
         nameViewBubble.centerYAnchor.constraint(equalTo:nameView.centerYAnchor).isActive = true
         nameViewBubble.widthAnchor.constraint(equalTo:nameView.widthAnchor, multiplier: 1/6).isActive = true
         nameViewBubble.heightAnchor.constraint(equalTo:nameView.heightAnchor).isActive = true
-        
-        
         
         
         nameView.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true

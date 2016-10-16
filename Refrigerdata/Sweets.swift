@@ -70,8 +70,10 @@ class Sweets: UITableViewController {
         startObservingDB()
         
         let userID = FIRAuth.auth()?.currentUser?.uid
+        print(userID)
         FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
-            self.usersName = snapshot.value(forKey: "name") as! String
+            print(snapshot)
+            //self.usersName = snapshot.value(forKey: "name") as! String
         })
        
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
@@ -87,11 +89,29 @@ class Sweets: UITableViewController {
     }
 
     func startObservingDB(){
-        dbRef.observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        /*
+        FIRDatabase.database().reference().child("sweet-items").observe(.value) { (snapshot: FIRDataSnapshot) in
+            print("im here")
+        }
+        */
+        
+        
+        
+        FIRDatabase.database().reference().child("sweet-items").child("almond milk").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+            
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
-                let sweetObject = Sweet(snapshot:sweet as! FIRDataSnapshot)
-                newSweets.append(sweetObject)
+                
+                
+                let test = ((sweet as! FIRDataSnapshot).key)
+                let test1 = snapshot.value(forKey:test)
+                //var test1 = 1
+                
+                print(test)
+                print(test1)
+                //let sweetObject = Sweet(snapshot:sweet as! FIRDataSnapshot)
+                //newSweets.append(sweetObject)
+                
             }
             self.sweets = newSweets
             if self.tableView.indexPathForSelectedRow != nil {
@@ -99,10 +119,11 @@ class Sweets: UITableViewController {
                 //self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
             }
-                self.tableView.reloadData()
-        }) { (error: Error) in
+            self.tableView.reloadData()
+            }, withCancel: { (error: Error) in
                 print(error.localizedDescription)
-        }
+        })
+        
         
     }
     

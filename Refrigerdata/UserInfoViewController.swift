@@ -135,12 +135,13 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        
         if FIRAuth.auth()?.currentUser?.uid != nil {
             self.performSegue(withIdentifier:"Login", sender: self)
         }else{
             print("User is not logged in")
         }
-
+         
     }
 
     
