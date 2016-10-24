@@ -12,7 +12,7 @@ import FirebaseDatabase
 struct Sweet {
     let key:String!
     let content:String!
-    let addedByUser:String!
+    var addedByUser:String!
     var owned:Bool!
     var ownedBy:String?
     var checked:Bool!
@@ -31,28 +31,34 @@ struct Sweet {
     init(snapshot:FIRDataSnapshot) {
         key = snapshot.key
         itemRef = snapshot.ref
+        print(snapshot.value)
         
-        if let sweetContent = snapshot.value(forKey:"content") as? String{
-            content = sweetContent
-        }else{
-            content = ""
-        }
-        if let sweetUser = snapshot.value(forKey:"addedByUser") as? String{
+        let value = snapshot.value as? NSDictionary
+        //let username = value?["username"] as! String
+        
+        if let sweetUser = value?["addedByUser"] as? String{
             addedByUser = sweetUser
         }else{
             addedByUser = ""
         }
-        if let sweetOwned = snapshot.value(forKey:"owned") as? Bool{
+        
+        if let sweetContent = value?["content"] as? String{
+            content = sweetContent
+        }else{
+            content = ""
+        }
+        
+        if let sweetOwned = value?["owned"] as? Bool{
             owned = sweetOwned
         }else{
             owned = false
         }
-        if let sweetOwnedBy = snapshot.value(forKey:"ownedBy") as? String{
+        if let sweetOwnedBy = value?["ownedBy"] as? String{
             ownedBy = sweetOwnedBy
         }else{
             ownedBy = ""
         }
-        if let sweetChecked = snapshot.value(forKey:"checked") as? Bool{
+        if let sweetChecked = value?["checked"] as? Bool{
             checked = sweetChecked
         }else{
             checked = false

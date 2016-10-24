@@ -97,20 +97,13 @@ class Sweets: UITableViewController {
         
         
         
-        FIRDatabase.database().reference().child("sweet-items").child("almond milk").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        FIRDatabase.database().reference().child("sweet-items").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
-                
-                
-                let test = ((sweet as! FIRDataSnapshot).key)
-                let test1 = snapshot.value(forKey:test)
-                //var test1 = 1
-                
-                print(test)
-                print(test1)
-                //let sweetObject = Sweet(snapshot:sweet as! FIRDataSnapshot)
-                //newSweets.append(sweetObject)
+
+                let sweetObject = Sweet(snapshot: sweet as! FIRDataSnapshot)
+                newSweets.append(sweetObject)
                 
             }
             self.sweets = newSweets
