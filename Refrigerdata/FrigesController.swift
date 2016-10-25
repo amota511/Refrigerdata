@@ -178,7 +178,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             for frigeName in snapshot.value as! NSDictionary{
                 //print(frigeName.key,frigeName.value)
                 
-                newFrigeNames.append(frigeName.value as! String)
+              //     !!!!!!!!!  newFrigeNames.append(frigeName.value as! String)
             }
             self.usersFrigesNames = newFrigeNames
             /*
@@ -243,7 +243,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath as IndexPath)
         
             
-            cell.backgroundColor = UIColor.white
+            cell.backgroundColor = UIColor.blue
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
             cell.heightAnchor.constraint(equalTo:collectionView.heightAnchor, multiplier: 3/4)

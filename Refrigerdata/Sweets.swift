@@ -71,9 +71,8 @@ class Sweets: UITableViewController {
         
         let userID = FIRAuth.auth()?.currentUser?.uid
         print(userID)
-        FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
-            print(snapshot)
-            //self.usersName = snapshot.value(forKey: "name") as! String
+        FIRDatabase.database().reference().child("Users").child(userID!).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
+            self.usersName = snapshot.value as! String
         })
        
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
@@ -89,14 +88,7 @@ class Sweets: UITableViewController {
     }
 
     func startObservingDB(){
-        /*
-        FIRDatabase.database().reference().child("sweet-items").observe(.value) { (snapshot: FIRDataSnapshot) in
-            print("im here")
-        }
-        */
-        
-        
-        
+
         FIRDatabase.database().reference().child("sweet-items").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             
             var newSweets = [Sweet]()
@@ -116,8 +108,6 @@ class Sweets: UITableViewController {
             }, withCancel: { (error: Error) in
                 print(error.localizedDescription)
         })
-        
-        
     }
     
     
@@ -175,7 +165,7 @@ class Sweets: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if tableView.indexPathForSelectedRow! == indexPath as IndexPath {
+        if tableView.indexPathForSelectedRow == indexPath as IndexPath {
             AnyRowIsSelected = true
             rowIsSelected = true
         }
@@ -318,7 +308,7 @@ class Sweets: UITableViewController {
                 cell.detail.textColor = UIColor(r: 100, g: 200, b: 100)
             }
         }else{
-            cell.detail.text = "Added by: \(sweet.addedByUser)"
+            cell.detail.text = "Added by: \(sweet.addedByUser!)"
             cell.item.textColor = UIColor.black
             cell.detail.textColor = UIColor.black
         }
@@ -427,8 +417,11 @@ class Sweets: UITableViewController {
         dbRef.child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
+                
                 return
             }
+            
+            
         })
       }else{
         sweet.checked = false
