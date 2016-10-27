@@ -106,6 +106,8 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
+    var name = String()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -165,6 +167,16 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         nameTextFieldHeightAnchor?.isActive = false
         nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0 : 1/3)
         nameTextFieldHeightAnchor?.isActive = true
+        
+        //Hack to fix name placeholder issue.
+        if loginRegisterSegmentedControl.selectedSegmentIndex == 0{
+            nameTextField.placeholder = ""
+            name = nameTextField.text!
+            nameTextField.text = ""
+        }else {
+            nameTextField.placeholder = "Name"
+            nameTextField.text! = name
+        }
         
         emailTextFieldHeightAnchor?.isActive = false
         emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo:inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1/2 : 1/3)
