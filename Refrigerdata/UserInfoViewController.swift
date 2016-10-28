@@ -219,11 +219,9 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     func handleRegisterLogin(){
         if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
             handleLogin()
-            
         }else{
             handleRegister()
         }
-        
     }
     
     func handleLogin(){
@@ -321,11 +319,9 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         passwordSeparatorView.widthAnchor.constraint(equalTo:inputsContainerView.widthAnchor).isActive = true
         passwordSeparatorView.heightAnchor.constraint(equalToConstant:1).isActive = true
         
-    }/*
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .lightContent
     }
-    */
+
+ 
     /*
     // MARK: - Navigation
 

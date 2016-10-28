@@ -76,7 +76,7 @@ class MenuController: UITableViewController {
         logout.heightAnchor.constraint(equalTo:logoutCell.heightAnchor).isActive = true
         
     }
-
+    
     func handleLogout(){
         do{
         try FIRAuth.auth()?.signOut()

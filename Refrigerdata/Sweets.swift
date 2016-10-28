@@ -100,8 +100,8 @@ class Sweets: UITableViewController {
             }
             self.sweets = newSweets
             if self.tableView.indexPathForSelectedRow != nil {
-                //self.tableView(tableView: self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
-                //self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)
+                
+                self.tableView(self.tableView, didDeselectRowAt: (self.tableView.indexPathForSelectedRow)!)
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
             }
             self.tableView.reloadData()
@@ -117,8 +117,7 @@ class Sweets: UITableViewController {
         if self.tableView.indexPathForSelectedRow != nil {
             self.tableView.deselectRow(at:self.tableView.indexPathForSelectedRow!, animated: true)
         }
-        sweetAlert.addTextField{
-            (textField:UITextField) in
+        sweetAlert.addTextField { (textField:UITextField) in
             textField.placeholder = "Your Item"
             textField.autocapitalizationType = .words
         }
@@ -146,11 +145,6 @@ class Sweets: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    /*
-     override func preferredStatusBarStyle() -> UIStatusBarStyle {
-     return .lightContent
-     }
-     */
     
     // MARK: - Table view data source
     
@@ -238,6 +232,8 @@ class Sweets: UITableViewController {
             }
         }
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath as IndexPath) as! RefrigerdataCell
@@ -393,12 +389,18 @@ class Sweets: UITableViewController {
             
                 let sweet = self.sweets[(self.tableView.indexPathForSelectedRow?.row)!]
                 let sweetRef = self.dbRef.child(sweet.content.lowercased())
+                self.tableView(self.tableView, didDeselectRowAt: (self.tableView.indexPathForSelectedRow)!)
+                self.tableView.deselectRow(at: (self.tableView.indexPathForSelectedRow)!, animated: true)
+            
+            
                 sweetRef.removeValue(completionBlock: { (err, ref) in
+                    
                     if err != nil {
                         print(err)
                         return
                     }
                 })
+            
         }))
         
         sweetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in

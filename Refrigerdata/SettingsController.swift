@@ -37,7 +37,6 @@ class SettingsController: UIViewController {
         
         return label
     }()
-    
 
     @IBOutlet var menu: UIBarButtonItem!
     override func viewDidLoad() {
