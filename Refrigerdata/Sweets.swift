@@ -115,7 +115,8 @@ class Sweets: UITableViewController {
     @IBAction func addSweet(sender: AnyObject) {
         let sweetAlert = UIAlertController(title: "New Item", message: "Enter Your Item", preferredStyle: .alert)
         if self.tableView.indexPathForSelectedRow != nil {
-            self.tableView.deselectRow(at:self.tableView.indexPathForSelectedRow!, animated: true)
+            self.tableView(self.tableView, didDeselectRowAt: (self.tableView.indexPathForSelectedRow)!)
+            self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
         }
         sweetAlert.addTextField { (textField:UITextField) in
             textField.placeholder = "Your Item"

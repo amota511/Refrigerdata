@@ -26,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A09ECD11DC2F92D00B4F8CE /* Refrigerdata.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Refrigerdata.entitlements; sourceTree = "<group>"; };
 		1A4809371D62C32B00152470 /* Refrigerdata.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Refrigerdata.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A48093C1D62C32B00152470 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MenuController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A48094C1D62C36700152470 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		1A4809391D62C32B00152470 /* Refrigerdata */ = {
 			isa = PBXGroup;
 			children = (
+				1A09ECD11DC2F92D00B4F8CE /* Refrigerdata.entitlements */,
 				1A48094C1D62C36700152470 /* AppDelegate.swift */,
 				1A48093C1D62C32B00152470 /* MenuController.swift */,
 				1A48095A1D62C39C00152470 /* UserInfoViewController.swift */,
@@ -155,6 +157,11 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 22ZGT27U85;
 						LastSwiftMigration = 0800;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -355,6 +362,7 @@
 			baseConfigurationReference = 563E172CC6A9CA6862B95C0A /* Pods-Refrigerdata.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Refrigerdata/Refrigerdata.entitlements;
 				DEVELOPMENT_TEAM = 22ZGT27U85;
 				INFOPLIST_FILE = Refrigerdata/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -369,6 +377,7 @@
 			baseConfigurationReference = 6C72306633D1500BF9F33D60 /* Pods-Refrigerdata.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Refrigerdata/Refrigerdata.entitlements;
 				DEVELOPMENT_TEAM = 22ZGT27U85;
 				INFOPLIST_FILE = Refrigerdata/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
