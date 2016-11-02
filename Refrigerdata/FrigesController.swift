@@ -69,6 +69,12 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         return button
     }()
     
+    lazy var FrigesSuperView: UIView = {
+        let view  = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     @IBOutlet var menu: UIBarButtonItem!
     
     override func viewDidLoad() {
@@ -85,7 +91,10 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         FrigeLayout.itemSize = CGSize(width: view.frame.width * (1/3), height: view.frame.height * (1/3) * (3/4))
         FrigeLayout.scrollDirection = .horizontal
         
-        FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/7), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
+        //self.view.addSubview(FrigesSuperView)
+        
+        
+        FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/5.5), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
         FrigesCollectionView.dataSource = self
         FrigesCollectionView.delegate = self
         FrigesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "FrigeCell")
@@ -94,14 +103,17 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         FrigesCollectionView.showsHorizontalScrollIndicator = false
         FrigesCollectionView.restorationIdentifier = "Friges"
         
-        //FrigesCollectionView.leftAnchor.constraint(equalTo:view.leftAnchor)
-        //FrigesCollectionView.topAnchor.constraint(equalTo:view.topAnchor, constant: 50)
-        //FrigesCollectionView.heightAnchor.constraint(equalTo:view.heightAnchor, multiplier: 1/3)
-        //FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor)
-        
+        self.view.addSubview(FrigesCollectionView)
+        /*
+        FrigesSuperView.leftAnchor.constraint(equalTo:view.leftAnchor)
+        FrigesSuperView.topAnchor.constraint(equalTo:view.topAnchor, constant: 50)
+        FrigesSuperView.heightAnchor.constraint(equalTo:view.heightAnchor, multiplier: 1/3)
+        FrigesSuperView.widthAnchor.constraint(equalTo:view.widthAnchor)
+        */
         //FrigesCollectionView.collectionViewLayout = FrigeLayout
         
-        self.view.addSubview(FrigesCollectionView)
+        
+        //self.view.addSubview(FrigesCollectionView)
         
         FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1)
 
@@ -161,13 +173,10 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
     
     func sendFirstFrige(){
         FIRDatabase.database().reference().child("Friges").observeSingleEvent(of: .value, with: { (snapshot) in
-            let frige = Frige(name:"First", members: ["me": "myself", "and" : "I"], lists:["POINT": "ER", "TO" : "IT"])
-            FIRDatabase.database().reference().child("Friges").childByAutoId().setValue(frige.toAnyObject())
+            //let frige = Frige(name:"First", members: [(FIRAuth.auth()?.currentUser?.uid)! : true, "j0o9DGEnELOQCtfrfQ1fh8FeJCj1" : true], lists:["POINT": "ER", "TO" : "IT"])
+            //FIRDatabase.database().reference().child("Friges").childByAutoId().setValue(frige.toAnyObject())
         })
 
-        
-        
-        
     }
     
     func ObserveUserFrige(){
@@ -175,10 +184,12 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             var newFrigeNames = [String]()
             
             //print(snapshot.value!)
-            for frigeName in snapshot.value as! NSDictionary{
-                //print(frigeName.key,frigeName.value)
-                
-              //     !!!!!!!!!  newFrigeNames.append(frigeName.value as! String)
+            if let value = snapshot.value as? NSDictionary{
+                for frige in value {
+                    print(frige.key,frige.value)
+                    newFrigeNames.append(frige.value as! String)
+                }
+
             }
             self.usersFrigesNames = newFrigeNames
             /*
@@ -194,17 +205,17 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         }) { (error: Error) in
             print(error.localizedDescription)
         }
-        startObservingDB()
+        //startObservingDB()
     }
     
     func startObservingDB(){
-        FIRDatabase.database().reference().child("Friges").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        print(self.usersFrigesNames)
+        for frige in self.usersFrigesNames{
+        FIRDatabase.database().reference().child("Friges").child(frige).observe(.value, with: { (snapshot:FIRDataSnapshot) in
+            
             var newfriges = [Frige]()
-            for frige in self.usersFrigesNames{
-                
-                let frigeObject = Frige(snapshot:snapshot.childSnapshot(forPath: frige))
-                newfriges.append(frigeObject)
-            }
+            let frigeObject = Frige(snapshot: snapshot)
+            newfriges.append(frigeObject)
             self.usersFriges = newfriges
             /*
              if self.tableView.indexPathForSelectedRow != nil {
@@ -218,7 +229,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         }) { (error: Error) in
             print(error.localizedDescription)
         }
-        
+        }
     }
     
     func handleAddList()  {
@@ -241,7 +252,6 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         
         if collectionView.restorationIdentifier == "Friges"{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath as IndexPath)
-        
             
             cell.backgroundColor = UIColor.blue
             cell.clipsToBounds = true
@@ -261,7 +271,6 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             ListsImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
             ListsImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
             
-        
             return cell
         }
         else{
@@ -275,10 +284,4 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             return cell
         }
     }
-    /*
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .lightContent
-    }
-    */
-    
 }

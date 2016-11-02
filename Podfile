@@ -10,4 +10,5 @@ target 'Refrigerdata' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
   pod 'SWRevealViewController'
+  #pod 'ReactiveCocoa'
 end
