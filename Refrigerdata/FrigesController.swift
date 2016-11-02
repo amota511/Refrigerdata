@@ -11,6 +11,7 @@ import Firebase
 import SWRevealViewController
 
 
+
 class FrigesController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
@@ -192,6 +193,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
 
             }
             self.usersFrigesNames = newFrigeNames
+            self.startObservingDB()
             /*
             if self.tableView.indexPathForSelectedRow != nil {
                 self.tableView(self.tableView, didDeselectRowAtIndexPath: self.tableView.indexPathForSelectedRow!)

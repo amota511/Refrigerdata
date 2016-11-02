@@ -7,10 +7,15 @@
 //
 
 import Foundation
+import Firebase
 
 struct List {
     
     let name:String!
     let members:[User]?
-    
+    /*
+    init(snapshot: FIRDataSnapshot) {
+        
+    }
+ */
 }

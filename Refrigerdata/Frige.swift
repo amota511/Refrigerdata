@@ -28,17 +28,21 @@ struct Frige {
     init(snapshot:FIRDataSnapshot) {
         key = snapshot.key
         itemRef = snapshot.ref
-        if let frigeName = snapshot.value(forKey: "name") as? String{
+        
+        let value = snapshot.value as? NSDictionary
+        
+        
+        if let frigeName = value?["name"] as? String{
             name = frigeName
         }else{
             name = ""
         }
-        if let frigeMembers = snapshot.value(forKey:"members") as? [String : String]{
+        if let frigeMembers = value?["members"] as? [String : String]{
             members = frigeMembers
         }else{
             members = nil
         }
-        if let frigeList = snapshot.value(forKey:"list") as? [String : String]?{
+        if let frigeList = value?["list"] as? [String : String]?{
             lists = frigeList
         }else{
             lists = nil
