@@ -13,11 +13,11 @@ struct Frige {
     
     let key:String!
     let name:String!
-    let members: [String : String]?
-    let lists: [String : String]?
+    let members: [String]?
+    let lists: [String]?
     let itemRef:FIRDatabaseReference?
     
-    init(name:String, members:[String : String], key:String = "", lists:[String : String]) {
+    init(name:String, members:[String], key:String = "", lists:[String]) {
         self.key = key
         self.name = name
         self.members = members
@@ -37,12 +37,12 @@ struct Frige {
         }else{
             name = ""
         }
-        if let frigeMembers = value?["members"] as? [String : String]{
+        if let frigeMembers = value?["members"] as? [String]{
             members = frigeMembers
         }else{
             members = nil
         }
-        if let frigeList = value?["list"] as? [String : String]?{
+        if let frigeList = value?["list"] as? [String]{
             lists = frigeList
         }else{
             lists = nil

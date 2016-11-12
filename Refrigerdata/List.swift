@@ -11,11 +11,29 @@ import Firebase
 
 struct List {
     
+    let key:String!
     let name:String!
-    let members:[User]?
-    /*
-    init(snapshot: FIRDataSnapshot) {
+    //let items:[String]?
+    let itemRef:FIRDatabaseReference?
+    
+    init(name:String, key:String = "") {
+        self.key = key
+        self.name = name
         
+        self.itemRef = nil
     }
- */
+    
+    init(snapshot: FIRDataSnapshot) {
+        key = snapshot.key
+        itemRef = snapshot.ref
+        
+        let value = snapshot.value as? NSDictionary
+        
+        if let listName = value?["name"] as? String{
+            name = listName
+        }else{
+            name = ""
+        }
+    }
+ 
 }

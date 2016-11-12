@@ -257,8 +257,12 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
             
             let ref = FIRDatabase.database().reference(fromURL: "https://refrigerdata-ab823.firebaseio.com/")
             let usersReference = ref.child("Users").child(uid)
-            let values = ["name" : name, "email" : email, "friges" : ["FrigeOne" : "RUHIUEHGI48UWRIJNEFDH", "FrigeTwo" : "IUH94HEIUDHIUBFD"]] as [String : Any]
-            usersReference.updateChildValues(values as [NSObject : AnyObject], withCompletionBlock: { (err, ref) in
+            let values = [ "name" : name,
+                           "email" : email,
+                           "friges" : ["RUHIUEHGI48UWRIJNEFDH", "IUH94HEIUDHIUBFD"]]
+                           as [String : Any]
+            
+            usersReference.updateChildValues( values as [NSObject : AnyObject], withCompletionBlock: { (err, ref) in
                 if err != nil {
                     print(err)
                     return

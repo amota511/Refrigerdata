@@ -66,7 +66,6 @@ class Sweets: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        dbRef = FIRDatabase.database().reference().child("sweet-items")
         startObservingDB()
         
         let userID = FIRAuth.auth()?.currentUser?.uid
@@ -88,8 +87,9 @@ class Sweets: UITableViewController {
     }
 
     func startObservingDB(){
-
-        FIRDatabase.database().reference().child("sweet-items").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        
+        
+        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
@@ -124,12 +124,13 @@ class Sweets: UITableViewController {
         }
         sweetAlert.addAction(UIAlertAction(title: "Send", style: .default, handler: {(UIAlertAction) in
             if let sweetContent = sweetAlert.textFields?.first?.text{
-                let userID = FIRAuth.auth()?.currentUser?.uid
-                FIRDatabase.database().reference().child("Users").child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
+                
                     let sweet = Sweet(content: sweetContent, addedByUser: self.usersName)
-                    let sweetRef = self.dbRef.child(sweetContent.lowercased())
+                
+                    let sweetRef = FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweetContent.lowercased())
+
                     sweetRef.setValue(sweet.toAnyObject())
-                })
+                
             }
         
         }))
@@ -141,11 +142,6 @@ class Sweets: UITableViewController {
         self.present(sweetAlert, animated: true, completion: nil)
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     
     // MARK: - Table view data source
     
@@ -155,7 +151,6 @@ class Sweets: UITableViewController {
     
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return sweets.count
     }
     
@@ -211,10 +206,6 @@ class Sweets: UITableViewController {
             checkButton.removeFromSuperview()
             deleteButton.removeFromSuperview()
             
-            /*
-            cell.item.rightAnchor.constraint(equalTo:cell.centerXAnchor, constant: -2).isActive = true
-            cell.detail.rightAnchor.constraint(equalTo:cell.centerXAnchor, constant: -2).isActive = true
-            */
  
             rowIsSelected = false
             tableView.deselectRow(at:indexPath as IndexPath, animated: true)
@@ -244,11 +235,6 @@ class Sweets: UITableViewController {
         ownItButton.removeFromSuperview()
         checkButton.removeFromSuperview()
         deleteButton.removeFromSuperview()
-        
-        /*
-        cell.item.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
-        cell.detail.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
-        */
         
  
         let sweet = sweets[indexPath.row]
@@ -351,7 +337,7 @@ class Sweets: UITableViewController {
             sweet.owned = true
             sweet.ownedBy = self.usersName
             
-            dbRef.child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
+            FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
                 if err != nil {
                     print(err)
                     return
@@ -362,6 +348,8 @@ class Sweets: UITableViewController {
     }
     
     func itemAlreadyOwned(){
+        
+    
         let sweet = sweets[(self.tableView.indexPathForSelectedRow?.row)!]
         let ownedBy = sweet.ownedBy
         if ownedBy == usersName {
@@ -389,7 +377,7 @@ class Sweets: UITableViewController {
             
             
                 let sweet = self.sweets[(self.tableView.indexPathForSelectedRow?.row)!]
-                let sweetRef = self.dbRef.child(sweet.content.lowercased())
+                let sweetRef = FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased())
                 self.tableView(self.tableView, didDeselectRowAt: (self.tableView.indexPathForSelectedRow)!)
                 self.tableView.deselectRow(at: (self.tableView.indexPathForSelectedRow)!, animated: true)
             
@@ -417,7 +405,7 @@ class Sweets: UITableViewController {
         
       if sweet.checked != true {
         sweet.checked = true
-        dbRef.child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 
@@ -428,7 +416,7 @@ class Sweets: UITableViewController {
         })
       }else{
         sweet.checked = false
-        dbRef.child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 return
