@@ -167,13 +167,11 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
     func ObserveUserFrige(){
         FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
             var newFrigeNames = [String]()
-            print("observe user frige called")
-            print(snapshot.value)
-            if let value = snapshot.value as? NSDictionary{
-                print("value is: \(value)")
+
+            if let value = snapshot.value as? [String]{
+                
                 for frige in value {
-                    print(frige.key,frige.value)
-                    newFrigeNames.append(frige.value as! String)
+                    newFrigeNames.append(frige)
                 }
             }
             self.usersFrigesNames = newFrigeNames
@@ -188,11 +186,12 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
     func startObservingDB(){
         
         var newfriges = [Frige]()
-        for frige in self.usersFrigesNames{
+        for frige in self.usersFrigesNames {
             FIRDatabase.database().reference().child("Friges").child(frige).observe(.value, with: { (snapshot:FIRDataSnapshot) in
                 
                 let frigeObject = Frige(snapshot: snapshot)
                 newfriges.append(frigeObject)
+                
                 //self.usersListsNames.append(frigeObject.name)
                 self.usersFriges = newfriges
                 
@@ -206,24 +205,83 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         
     }
     func handleAddFrige(){
+        let blur = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blur)
+        blurView.frame = self.view.bounds
+        self.view.addSubview(blurView)
+        
+        let cancel = UIButton(type: .system)
+        //cancel.backgroundColor = UIColor(r: 85, g: 185, b: 85)
+        cancel.setTitle("X", for: .normal)
+        //cancel.showsTouchWhenHighlighted = true
+        cancel.translatesAutoresizingMaskIntoConstraints = false
+        cancel.setTitleColor(UIColor.white, for: .normal)
+        //cancel.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        cancel.addTarget(self, action: #selector(handleAddList), for: .touchUpInside)
+        //cancel.clipsToBounds = true
+        //cancel.layer.cornerRadius = 10
+        
+        blurView.contentView.addSubview(cancel)
+        
+        cancel.topAnchor.constraint(equalTo: (self.navigationController?.navigationBar.bottomAnchor)!, constant: 24).isActive = true
+        cancel.rightAnchor.constraint(equalTo: blurView.rightAnchor, constant: -24).isActive = true
+        cancel.widthAnchor.constraint(equalTo: blurView.widthAnchor, multiplier: 1/9).isActive = true
+        cancel.heightAnchor.constraint(equalTo: blurView.heightAnchor, multiplier: 1/15).isActive = true
+        
+        
         
     }
     
     func handleAddList()  {
         
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //FIRDatabase.database().reference().child("Lists").child(usersFriges[indexPath.row].key).child("name").observe(.value, with: { (snapshot) in
+        //}) { (error: Error) in
+        
+        //   print(error.localizedDescription)
+        //}
+        
+        
+        
+        if collectionView.restorationIdentifier == "Friges"{
+            //print(self.usersFriges[0].lists)
+            self.usersListsNames = self.usersFriges[indexPath.row].lists
+            var newlistArray = [List]()
+            for uln in self.usersListsNames {
+                FIRDatabase.database().reference().child("Lists").child(uln).observe(.value, with: {
+                    (snapshot) in
+                    
+                    newlistArray.append( List(snapshot: snapshot) )
+                    self.usersLists = newlistArray
+                    self.ListCollectionView.reloadData()
+                })
+                
+            }
+            
+        }else{
+            
+            
+            
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.restorationIdentifier == "Friges"{
+            
             if let num = self.usersFriges {
                 return num.count
             }
-            return 9
+            return 0
         }else{
+            
             if let num = self.usersLists {
                 return num.count
             }
-            return 9
+            return 0
         }
     }
     
@@ -235,6 +293,23 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             cell.backgroundColor = UIColor.white
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
+            
+            if let title = self.usersFriges?[indexPath.row] {
+                let frigeTitle = UILabel()
+                
+                frigeTitle.text = title.name
+                frigeTitle.textAlignment = .center
+                
+                frigeTitle.translatesAutoresizingMaskIntoConstraints = false
+                
+                cell.addSubview(frigeTitle)
+                
+                frigeTitle.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
+                frigeTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+                frigeTitle.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1/5).isActive = true
+                frigeTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
+            }
+            
 
             let FrigeImage = UIImageView()
             FrigeImage.contentMode = .scaleAspectFill
@@ -256,17 +331,36 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
 
-            let FrigeImage = UIImageView()
-            FrigeImage.contentMode = .scaleAspectFill
-            FrigeImage.translatesAutoresizingMaskIntoConstraints = false
-            FrigeImage.image = UIImage(named: "")
             
-            cell.addSubview(FrigeImage)
             
-            FrigeImage.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
-            FrigeImage.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-            FrigeImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
-            FrigeImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
+            if let title = self.usersLists?[indexPath.row] {
+                let listTitle = UILabel()
+                
+                listTitle.text = title.name
+                listTitle.textAlignment = .center
+                
+                listTitle.translatesAutoresizingMaskIntoConstraints = false
+                
+                cell.addSubview(listTitle)
+                
+                listTitle.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
+                listTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+                listTitle.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1/5).isActive = true
+                listTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
+            }
+            
+            
+            let listImage = UIImageView()
+            listImage.contentMode = .scaleAspectFill
+            listImage.translatesAutoresizingMaskIntoConstraints = false
+            listImage.image = UIImage(named: "")
+            
+            cell.addSubview(listImage)
+            
+            listImage.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
+            listImage.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+            listImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
+            listImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
             
             return cell
         }

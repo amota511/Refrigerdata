@@ -13,13 +13,11 @@ struct List {
     
     let key:String!
     let name:String!
-    //let items:[String]?
     let itemRef:FIRDatabaseReference?
     
     init(name:String, key:String = "") {
         self.key = key
         self.name = name
-        
         self.itemRef = nil
     }
     

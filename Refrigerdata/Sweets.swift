@@ -19,6 +19,7 @@ class Sweets: UITableViewController {
     var rowIsSelected = false
     var AnyRowIsSelected = false
     var usersName:String!
+    var listName:String!
     
     lazy var ownItButton: UIButton = {
         let button = UIButton()
@@ -68,6 +69,7 @@ class Sweets: UITableViewController {
 
         startObservingDB()
         
+        
         let userID = FIRAuth.auth()?.currentUser?.uid
         print(userID)
         FIRDatabase.database().reference().child("Users").child(userID!).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -88,12 +90,16 @@ class Sweets: UITableViewController {
 
     func startObservingDB(){
         
+        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("name").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+            self.listName = snapshot.value as! String!
+            self.tableView.reloadData()
+            })
         
         FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
-
+                
                 let sweetObject = Sweet(snapshot: sweet as! FIRDataSnapshot)
                 newSweets.append(sweetObject)
                 
@@ -151,7 +157,12 @@ class Sweets: UITableViewController {
     
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         return sweets.count
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return listName
     }
     
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -348,7 +359,6 @@ class Sweets: UITableViewController {
     }
     
     func itemAlreadyOwned(){
-        
     
         let sweet = sweets[(self.tableView.indexPathForSelectedRow?.row)!]
         let ownedBy = sweet.ownedBy

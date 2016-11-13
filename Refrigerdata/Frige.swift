@@ -42,7 +42,7 @@ struct Frige {
         }else{
             members = nil
         }
-        if let frigeList = value?["list"] as? [String]{
+        if let frigeList = value?["lists"] as? [String]{
             lists = frigeList
         }else{
             lists = nil
