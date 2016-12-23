@@ -72,6 +72,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         return button
     }()
     
+    var frigeListView: UIView?
     
     @IBOutlet var menu: UIBarButtonItem!
     
@@ -186,7 +187,9 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
     func startObservingDB(){
         
         var newfriges = [Frige]()
+        
         for frige in self.usersFrigesNames {
+            
             FIRDatabase.database().reference().child("Friges").child(frige).observe(.value, with: { (snapshot:FIRDataSnapshot) in
                 
                 let frigeObject = Frige(snapshot: snapshot)
@@ -197,6 +200,7 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
                 
                 self.FrigesCollectionView.reloadData()
                 self.ListCollectionView.reloadData()
+                
             }) { (error: Error) in
                 print(error.localizedDescription)
             }
@@ -210,26 +214,86 @@ class FrigesController: UIViewController, UICollectionViewDataSource, UICollecti
         blurView.frame = self.view.bounds
         self.view.addSubview(blurView)
         
+        let cancelButton = createCancelButton()
+        blurView.contentView.addSubview(cancelButton)
+        
+        cancelButton.topAnchor.constraint(equalTo: (self.navigationController?.navigationBar.bottomAnchor)!, constant: 24).isActive = true
+        cancelButton.rightAnchor.constraint(equalTo: blurView.rightAnchor, constant: -24).isActive = true
+        cancelButton.widthAnchor.constraint(equalTo: blurView.widthAnchor, multiplier: 1/9).isActive = true
+        cancelButton.heightAnchor.constraint(equalTo: blurView.heightAnchor, multiplier: 1/15).isActive = true
+        
+        
+        let frigeListSwitch = createFrigeLstSegmentedControl(cancelButton: cancelButton)
+        blurView.contentView.addSubview(frigeListSwitch)
+        setFrigeListSegmentedControl(switchControl: frigeListSwitch, cancelButton: cancelButton)
+        
+        let containerView = createFrigeListContainer(frigeListSwitch: frigeListSwitch)
+        frigeListView = containerView
+        blurView.contentView.addSubview(containerView)
+        setFrigeListContainer(view: containerView, segmentedSwitch: frigeListSwitch)
+    }
+    
+    func createCancelButton() -> UIButton {
         let cancel = UIButton(type: .system)
-        //cancel.backgroundColor = UIColor(r: 85, g: 185, b: 85)
         cancel.setTitle("X", for: .normal)
-        //cancel.showsTouchWhenHighlighted = true
         cancel.translatesAutoresizingMaskIntoConstraints = false
         cancel.setTitleColor(UIColor.white, for: .normal)
-        //cancel.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        cancel.addTarget(self, action: #selector(handleAddList), for: .touchUpInside)
-        //cancel.clipsToBounds = true
-        //cancel.layer.cornerRadius = 10
+        cancel.addTarget(self, action: #selector(removeBlur(sender:)), for: .touchUpInside)
+        return cancel
+    }
+    
+    func removeBlur(sender: UIButton) {
+        let blurView = sender.superview?.superview
+        blurView?.removeFromSuperview()
+        print("The blur view should be removed")
         
-        blurView.contentView.addSubview(cancel)
-        
-        cancel.topAnchor.constraint(equalTo: (self.navigationController?.navigationBar.bottomAnchor)!, constant: 24).isActive = true
-        cancel.rightAnchor.constraint(equalTo: blurView.rightAnchor, constant: -24).isActive = true
-        cancel.widthAnchor.constraint(equalTo: blurView.widthAnchor, multiplier: 1/9).isActive = true
-        cancel.heightAnchor.constraint(equalTo: blurView.heightAnchor, multiplier: 1/15).isActive = true
-        
-        
-        
+    }
+    
+    func createFrigeLstSegmentedControl(cancelButton: UIButton) -> UISegmentedControl {
+        let switchControl = UISegmentedControl(items: ["Frige", "List"])
+        switchControl.translatesAutoresizingMaskIntoConstraints = false
+        switchControl.tintColor = .white
+        switchControl.setTitleTextAttributes(["Color": "White"], for: .normal)
+        switchControl.selectedSegmentIndex = 0
+        switchControl.addTarget(self, action: #selector(frigeListSegmentedControlSwitch(sender:)), for: .valueChanged)
+        return switchControl
+    }
+    
+    func setFrigeListSegmentedControl(switchControl: UISegmentedControl, cancelButton: UIButton) {
+        switchControl.topAnchor.constraint(equalTo: cancelButton.bottomAnchor).isActive = true
+        switchControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        switchControl.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 4/5).isActive = true
+        switchControl.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1/16).isActive = true
+    }
+    
+    func frigeListSegmentedControlSwitch(sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            if let frigeView = frigeListView {
+                //frigeView.inputView?.subviews.removeAll()
+            }
+            
+        }else if sender.selectedSegmentIndex == 1 {
+            if let listView = frigeListView {
+                
+            }
+
+        }
+    }
+    
+    func createFrigeListContainer(frigeListSwitch: UISegmentedControl) -> UIView {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = false
+        view.layer.cornerRadius = 10
+        return view
+    }
+    
+    func setFrigeListContainer(view: UIView, segmentedSwitch: UISegmentedControl) {
+        view.topAnchor.constraint(equalTo: segmentedSwitch.bottomAnchor, constant: 12).isActive = true
+        view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        view.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 4/5).isActive = true
+        view.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 3/5).isActive = true
     }
     
     func handleAddList()  {
