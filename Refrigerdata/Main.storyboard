@@ -77,10 +77,15 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="v5Y-kS-Dhw" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="q3q-22-Bf8">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="q3q-22-Bf8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.39215686274509803" green="0.78431372549019607" blue="0.39215686274509803" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="Lobster-Regular" family="Lobster" pointSize="27"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textShadowColor" red="1" green="0.4299610908" blue="0.3944113232" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -107,7 +112,7 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
                         <segue destination="xr5-4K-l1d" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="YD2-IM-PIG"/>
-                        <segue destination="v5Y-kS-Dhw" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="m4K-RF-cyt"/>
+                        <segue destination="epq-vr-VHc" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="SYW-Jo-X2y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BsD-G7-VSn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -192,7 +197,7 @@
                         <viewControllerLayoutGuide type="bottom" id="NcJ-lw-opA"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="wkc-TJ-q1L">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -204,6 +209,7 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
                         <outlet property="menu" destination="z35-ue-2dn" id="EXb-Hw-6QD"/>
+                        <segue destination="v5Y-kS-Dhw" kind="presentation" id="lll-bi-bNj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U2d-Nd-tWi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -219,7 +225,7 @@
                         <viewControllerLayoutGuide type="bottom" id="I1h-Gm-Ydk"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="USu-rw-LJC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -243,9 +249,14 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="szU-oL-Gsv" sceneMemberID="viewController">
                     <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="AkJ-97-fXy">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" translucent="NO" id="AkJ-97-fXy">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.3921568627" green="0.7843137255" blue="0.3921568627" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="Lobster-Regular" family="Lobster" pointSize="27"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -262,9 +273,14 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="epq-vr-VHc" sceneMemberID="viewController">
                     <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="EIJ-Oy-Dho">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" translucent="NO" id="EIJ-Oy-Dho">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.3921568627" green="0.7843137255" blue="0.3921568627" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="Lobster-Regular" family="Lobster" pointSize="27"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -279,4 +295,7 @@
     <resources>
         <image name="More" width="20" height="20"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="SYW-Jo-X2y"/>
+    </inferredMetricsTieBreakers>
 </document>

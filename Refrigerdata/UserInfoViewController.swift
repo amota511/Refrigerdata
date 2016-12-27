@@ -98,7 +98,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     let refridgerdata: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Lobster-Regular", size: 45)
-        label.text = "Refridgerdata"
+        label.text = "Refrigerdata"
         label.textColor =  UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         //label.font = UIFont.boldSystemFont(ofSize: 32)
@@ -109,6 +109,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ state: UITextField) -> Bool {
         inputsContainerViewYAnchor?.isActive = false
         inputsContainerView.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -85).isActive = true
+        
         return true
     }
     

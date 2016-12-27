@@ -64,6 +64,19 @@ class Sweets: UITableViewController {
     
     @IBOutlet var menu: UIBarButtonItem!
     
+    var path: String!
+    
+    init(Path: String) {
+        super.init(style: .plain)
+        
+        path = Path
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -77,25 +90,31 @@ class Sweets: UITableViewController {
         })
        
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
-        
+        //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
+        /*
         if self.revealViewController() != nil {
             menu.target = self.revealViewController()
             menu.action = #selector(SWRevealViewController.revealToggle(_:))
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
-       
-
+       */
+        
+        let plusSign = "+"
+        
+        let rightBarButton = UIBarButtonItem(title: "+",  style: .plain, target: self, action: #selector(addSweet(sender:)))
+        self.navigationItem.rightBarButtonItem = rightBarButton
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+        self.navigationController?.navigationBar.tintColor = UIColor.white
     }
 
     func startObservingDB(){
         
-        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("name").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        FIRDatabase.database().reference().child("Lists").child(path).child("name").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             self.listName = snapshot.value as! String!
             self.tableView.reloadData()
             })
         
-        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").observe(.value, with: { (snapshot:FIRDataSnapshot) in
+        FIRDatabase.database().reference().child("Lists").child(path).child("list").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             
             var newSweets = [Sweet]()
             for sweet in snapshot.children{
@@ -133,7 +152,7 @@ class Sweets: UITableViewController {
                 
                     let sweet = Sweet(content: sweetContent, addedByUser: self.usersName)
                 
-                    let sweetRef = FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweetContent.lowercased())
+                    let sweetRef = FIRDatabase.database().reference().child("Lists").child(self.path).child("list").child(sweetContent.lowercased())
 
                     sweetRef.setValue(sweet.toAnyObject())
                 
@@ -268,7 +287,8 @@ class Sweets: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath as IndexPath as IndexPath) as! RefrigerdataCell
+        tableView.register(RefrigerdataCell.self, forCellReuseIdentifier: "Cell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! RefrigerdataCell
         let sweet = sweets[indexPath.row]
         
         
@@ -348,7 +368,7 @@ class Sweets: UITableViewController {
             sweet.owned = true
             sweet.ownedBy = self.usersName
             
-            FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
+            FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
                 if err != nil {
                     print(err)
                     return
@@ -387,7 +407,7 @@ class Sweets: UITableViewController {
             
             
                 let sweet = self.sweets[(self.tableView.indexPathForSelectedRow?.row)!]
-                let sweetRef = FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased())
+                let sweetRef = FIRDatabase.database().reference().child("Lists").child(self.path).child("list").child(sweet.content.lowercased())
                 self.tableView(self.tableView, didDeselectRowAt: (self.tableView.indexPathForSelectedRow)!)
                 self.tableView.deselectRow(at: (self.tableView.indexPathForSelectedRow)!, animated: true)
             
@@ -415,7 +435,7 @@ class Sweets: UITableViewController {
         
       if sweet.checked != true {
         sweet.checked = true
-        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 
@@ -426,7 +446,7 @@ class Sweets: UITableViewController {
         })
       }else{
         sweet.checked = false
-        FIRDatabase.database().reference().child("Lists").child("-KWLgC2-1fir3LeGHTzZ").child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
+        FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
                 print(err)
                 return

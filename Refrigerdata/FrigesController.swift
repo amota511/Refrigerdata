@@ -14,34 +14,31 @@ extension FrigesController: UICollectionViewDataSource {
     
 
     
-    private func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //FIRDatabase.database().reference().child("Lists").child(usersFriges[indexPath.row].key).child("name").observe(.value, with: { (snapshot) in
-        //}) { (error: Error) in
-        
-        //   print(error.localizedDescription)
-        //}
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         
+        print("Sup")
         
         if collectionView.restorationIdentifier == "Friges"{
-            print(self.usersFriges[0].lists)
-            self.usersListsNames = self.usersFriges[indexPath.row].lists
+
+            self.usersListsNames = self.usersFriges[indexPath.row].lists!
             var newlistArray = [List]()
-            for uln in self.usersListsNames {
-                FIRDatabase.database().reference().child("Lists").child(uln).observe(.value, with: {
-                    (snapshot) in
+            for listName in self.usersListsNames {
+                FIRDatabase.database().reference().child("Lists").child(listName).observeSingleEvent(of: .value, with: { (snapshot) in
                     
                     newlistArray.append( List(snapshot: snapshot) )
                     self.usersLists = newlistArray
                     self.ListCollectionView.reloadData()
                 })
-                
+ 
             }
-            
         }else{
+            let path = self.usersListsNames[indexPath.row]
             
             
-            
+            print(path)
+            let lvc = Sweets(Path: path)
+            self.navigationController?.pushViewController(lvc, animated: true)
         }
         
     }
@@ -65,17 +62,19 @@ extension FrigesController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if collectionView.restorationIdentifier == "Friges"{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath as IndexPath)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath)
             
             cell.backgroundColor = UIColor.white
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
             
+            let frigeTitle = UILabel()
+
             if let title = self.usersFriges?[indexPath.row] {
-                let frigeTitle = UILabel()
                 
                 frigeTitle.text = title.name
                 frigeTitle.textAlignment = .center
+                frigeTitle.textRect(forBounds: cell.frame, limitedToNumberOfLines: 10)
                 
                 frigeTitle.translatesAutoresizingMaskIntoConstraints = false
                 
@@ -87,11 +86,10 @@ extension FrigesController: UICollectionViewDataSource {
                 frigeTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
             }
             
-            
             let FrigeImage = UIImageView()
             FrigeImage.contentMode = .scaleAspectFill
             FrigeImage.translatesAutoresizingMaskIntoConstraints = false
-            FrigeImage.image = UIImage(named: "")
+            //FrigeImage.image = #imageLiteral(resourceName: "silver_frige1")
             
             cell.addSubview(FrigeImage)
             
@@ -100,21 +98,28 @@ extension FrigesController: UICollectionViewDataSource {
             FrigeImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
             FrigeImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
             
+            
+            cell.bringSubview(toFront: frigeTitle)
+
             return cell
         }
         else{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ListCell", for: indexPath as IndexPath)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ListCell", for: indexPath)
             cell.backgroundColor = UIColor.white
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
             
             
+            let listTitle = UILabel()
             
             if let title = self.usersLists?[indexPath.row] {
-                let listTitle = UILabel()
                 
-                listTitle.text = title.name
+                
+                
                 listTitle.textAlignment = .center
+                listTitle.lineBreakMode = .byWordWrapping
+                listTitle.numberOfLines = 0
+                listTitle.text = title.name
                 
                 listTitle.translatesAutoresizingMaskIntoConstraints = false
                 
@@ -122,15 +127,14 @@ extension FrigesController: UICollectionViewDataSource {
                 
                 listTitle.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
                 listTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-                listTitle.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1/5).isActive = true
+                listTitle.heightAnchor.constraint(equalTo: cell.heightAnchor).isActive = true
                 listTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
             }
-            
             
             let listImage = UIImageView()
             listImage.contentMode = .scaleAspectFill
             listImage.translatesAutoresizingMaskIntoConstraints = false
-            listImage.image = UIImage(named: "")
+            listImage.image = #imageLiteral(resourceName: "notebook_paper")
             
             cell.addSubview(listImage)
             
@@ -139,6 +143,7 @@ extension FrigesController: UICollectionViewDataSource {
             listImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
             listImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
             
+            cell.bringSubview(toFront: listTitle)
             return cell
         }
     }
@@ -150,7 +155,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     var dbRef:FIRDatabaseReference!
     var usersFrigesNames: [String]!
     var usersFriges: [Frige]!
-    var usersListsNames: [String]!
+    var usersListsNames = [String]()
     var usersLists: [List]!
     var FrigesCollectionView: UICollectionView!
     var ListCollectionView: UICollectionView!
@@ -216,24 +221,27 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
         
         let FrigeLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        FrigeLayout.sectionInset = UIEdgeInsets(top: -55, left: 10, bottom: 10, right: 10)
+        FrigeLayout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 0, right: 10)
         FrigeLayout.itemSize = CGSize(width: view.frame.width * (1/3), height: view.frame.height * (1/3) * (3/4))
         FrigeLayout.scrollDirection = .horizontal
         
         
         
-        FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/5.5), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
+        FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/13.5), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
         FrigesCollectionView.dataSource = self
         FrigesCollectionView.delegate = self
         FrigesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "FrigeCell")
         FrigesCollectionView.isScrollEnabled = true
         FrigesCollectionView.backgroundColor = UIColor(r: 85, g: 185, b: 85)
         FrigesCollectionView.showsHorizontalScrollIndicator = false
+        FrigesCollectionView.allowsSelection = true
         FrigesCollectionView.restorationIdentifier = "Friges"
+        FrigesCollectionView.alwaysBounceHorizontal = true
+        FrigesCollectionView.bounces = true
         
         self.view.addSubview(FrigesCollectionView)
         
-        FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1)
+        //FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1)
 
         self.view.addSubview(FrigesLabel)
         FrigesLabel.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
@@ -254,7 +262,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         ListLayout.itemSize = CGSize(width: view.frame.width * (1/3), height: view.frame.height * (1/3) * (3/4))
         ListLayout.scrollDirection = .horizontal
  
-        ListCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/3.5) + FrigesCollectionView.frame.height * 1.00, width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: ListLayout)
+        ListCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/4.5) + FrigesCollectionView.frame.height * 1.00, width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: ListLayout)
         ListCollectionView.dataSource = self
         ListCollectionView.delegate = self
         ListCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "ListCell")
@@ -262,6 +270,8 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         ListCollectionView.backgroundColor = UIColor(r: 85, g: 185, b: 85)
         ListCollectionView.showsHorizontalScrollIndicator = false
         ListCollectionView.restorationIdentifier = "Lists"
+        ListCollectionView.alwaysBounceHorizontal = true
+        ListCollectionView.bounces = true
         self.view.addSubview(ListCollectionView)
         
         
@@ -278,8 +288,8 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         addListButton.heightAnchor.constraint(equalTo:ListCollectionView.heightAnchor, multiplier: 1/6).isActive = true
         
         
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
+        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
         
         if self.revealViewController() != nil {
             menu.target = self.revealViewController()
@@ -307,6 +317,8 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                     newFrigeNames.append(frige)
                 }
             }
+            print(snapshot.value)
+            print(newFrigeNames)
             self.usersFrigesNames = newFrigeNames
             self.startObservingDB()
 
@@ -326,7 +338,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 
                 let frigeObject = Frige(snapshot: snapshot)
                 newfriges.append(frigeObject)
-                
+                print(frigeObject.name)
                 self.usersListsNames.append(frigeObject.name)
                 self.usersFriges = newfriges
                 
@@ -367,7 +379,29 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         let addFrigeListButton = createAddFrigeListButton()
         blurView.contentView.addSubview(addFrigeListButton)
         setAddFrigeButton(button: addFrigeListButton, superview: containerView)
+        
+        let nameLabel = createNewNameLabel()
+        containerView.addSubview(nameLabel)
+        setNewNameLabel(label: nameLabel, superview: containerView)
     }
+    
+    func createNewNameLabel() -> UILabel {
+        let lb = UILabel()
+        lb.textAlignment = .left
+        lb.text = "Name"
+        lb.font = UIFont.systemFont(ofSize: 16, weight: 1)
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        return lb
+    }
+    
+    func setNewNameLabel(label: UILabel, superview: UIView){
+        label.topAnchor.constraint(equalTo: superview.topAnchor, constant: 6).isActive = true
+        label.leftAnchor.constraint(equalTo: superview.leftAnchor).isActive = true
+        label.widthAnchor.constraint(equalTo: superview.widthAnchor, multiplier: 1/2).isActive = true
+        label.heightAnchor.constraint(equalTo: superview.heightAnchor, multiplier: 1/8).isActive = true
+        
+    }
+    
     
     func createCancelButton() -> UIButton {
         let cancel = UIButton(type: .system)

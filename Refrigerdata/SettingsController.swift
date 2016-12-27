@@ -42,8 +42,8 @@ class SettingsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
+        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
         
         
         
@@ -55,7 +55,7 @@ class SettingsController: UIViewController {
             setupView()
             
         }
-        
+ 
     }
     
     func setupView(){
