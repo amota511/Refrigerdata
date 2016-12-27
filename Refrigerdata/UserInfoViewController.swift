@@ -95,11 +95,23 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
+    let refridgerdata: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Lobster-Regular", size: 45)
+        label.text = "Refridgerdata"
+        label.textColor =  UIColor.white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        //label.font = UIFont.boldSystemFont(ofSize: 32)
+        label.textAlignment = .center
+        return label
+    }()
+    
     func textFieldShouldBeginEditing(_ state: UITextField) -> Bool {
         inputsContainerViewYAnchor?.isActive = false
-        inputsContainerView.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -100).isActive = true
+        inputsContainerView.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -85).isActive = true
         return true
     }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         handleRegisterLogin()
@@ -112,6 +124,10 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
+        
+        view.addSubview(refridgerdata)
+        setRefridgerdata()
+        
         
         view.addSubview(loginRegisterSegmentedControl)
         view.addSubview(inputsContainerView)
@@ -142,10 +158,18 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
             self.performSegue(withIdentifier:"Login", sender: self)
         }else{
             print("User is not logged in")
+            
         }
         
     }
 
+    func setRefridgerdata(){
+        
+        refridgerdata.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
+        refridgerdata.topAnchor.constraint(equalTo: view.topAnchor, constant: 24).isActive = true
+        refridgerdata.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 4/5).isActive = true
+        refridgerdata.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/5).isActive = true
+    }
     
     func setloginRegisterSegmentedControl() {
         loginRegisterSegmentedControl.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
