@@ -99,12 +99,14 @@ class Sweets: UITableViewController {
         }
        */
         
-        let plusSign = "+"
+        let rightBarButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addSweet(sender:)))
         
-        let rightBarButton = UIBarButtonItem(title: "+",  style: .plain, target: self, action: #selector(addSweet(sender:)))
+        
         self.navigationItem.rightBarButtonItem = rightBarButton
         self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Lobster-Regular", size: 22)!, NSForegroundColorAttributeName : UIColor.white]
+
     }
 
     func startObservingDB(){

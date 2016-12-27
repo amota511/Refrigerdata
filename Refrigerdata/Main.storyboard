@@ -209,7 +209,6 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
                         <outlet property="menu" destination="z35-ue-2dn" id="EXb-Hw-6QD"/>
-                        <segue destination="v5Y-kS-Dhw" kind="presentation" id="lll-bi-bNj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U2d-Nd-tWi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -289,13 +288,13 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="doZ-VS-hFR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1027" y="1047"/>
+            <point key="canvasLocation" x="1012" y="1151"/>
         </scene>
     </scenes>
     <resources>
         <image name="More" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="SYW-Jo-X2y"/>
+        <segue reference="7By-vf-5lq"/>
     </inferredMetricsTieBreakers>
 </document>

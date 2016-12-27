@@ -39,6 +39,7 @@ extension FrigesController: UICollectionViewDataSource {
             print(path)
             let lvc = Sweets(Path: path)
             self.navigationController?.pushViewController(lvc, animated: true)
+            self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Lobster-Regular", size: 22)!]
         }
         
     }
