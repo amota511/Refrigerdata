@@ -84,26 +84,18 @@ class Sweets: UITableViewController {
         
         
         let userID = FIRAuth.auth()?.currentUser?.uid
-        print(userID)
         FIRDatabase.database().reference().child("Users").child(userID!).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
             self.usersName = snapshot.value as! String
         })
        
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
-        /*
-        if self.revealViewController() != nil {
-            menu.target = self.revealViewController()
-            menu.action = #selector(SWRevealViewController.revealToggle(_:))
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
-       */
         
         let rightBarButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addSweet(sender:)))
         
         
         self.navigationItem.rightBarButtonItem = rightBarButton
         self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Lobster-Regular", size: 22)!, NSForegroundColorAttributeName : UIColor.white]
 
@@ -405,7 +397,8 @@ class Sweets: UITableViewController {
         let item = cell.item.text!
         let sweetAlert = UIAlertController(title: "Are you sure you want to delete \(item) from this list?", message: nil, preferredStyle: .alert)
         
-        sweetAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {(UIAlertAction) in
+        sweetAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {
+            (UIAlertAction) in
             
             
                 let sweet = self.sweets[(self.tableView.indexPathForSelectedRow?.row)!]

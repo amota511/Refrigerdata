@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import SWRevealViewController
+
 
 extension FrigesController: UICollectionViewDataSource {
     
@@ -17,11 +17,9 @@ extension FrigesController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         
-        print("Sup")
-        
         if collectionView.restorationIdentifier == "Friges"{
 
-            self.usersListsNames = self.usersFriges[indexPath.row].lists!
+            self.usersListsNames = self.usersFriges[indexPath.row].lists
             var newlistArray = [List]()
             for listName in self.usersListsNames {
                 FIRDatabase.database().reference().child("Lists").child(listName).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -35,8 +33,6 @@ extension FrigesController: UICollectionViewDataSource {
         }else{
             let path = self.usersListsNames[indexPath.row]
             
-            
-            print(path)
             let lvc = Sweets(Path: path)
             self.navigationController?.pushViewController(lvc, animated: true)
             self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Lobster-Regular", size: 22)!]
@@ -53,10 +49,9 @@ extension FrigesController: UICollectionViewDataSource {
             return 0
         }else{
             
-            if let num = self.usersLists {
-                return num.count
-            }
-            return 0
+            let num = self.usersLists
+            return num.count
+
         }
     }
     
@@ -84,11 +79,11 @@ extension FrigesController: UICollectionViewDataSource {
                 frigeTitle.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
                 frigeTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
                 frigeTitle.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1/5).isActive = true
-                frigeTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
+                frigeTitle.widthAnchor.constraint(equalTo: cell.widthAnchor).isActive = true
             }
             
             let FrigeImage = UIImageView()
-            FrigeImage.contentMode = .scaleAspectFill
+            FrigeImage.contentMode = .scaleAspectFit
             FrigeImage.translatesAutoresizingMaskIntoConstraints = false
             //FrigeImage.image = #imageLiteral(resourceName: "silver_frige1")
             
@@ -113,7 +108,7 @@ extension FrigesController: UICollectionViewDataSource {
             
             let listTitle = UILabel()
             
-            if let title = self.usersLists?[indexPath.row] {
+            let title = self.usersLists[indexPath.row]
                 
                 
                 
@@ -130,7 +125,7 @@ extension FrigesController: UICollectionViewDataSource {
                 listTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
                 listTitle.heightAnchor.constraint(equalTo: cell.heightAnchor).isActive = true
                 listTitle.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
-            }
+            
             
             let listImage = UIImageView()
             listImage.contentMode = .scaleAspectFill
@@ -157,7 +152,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     var usersFrigesNames: [String]!
     var usersFriges: [Frige]!
     var usersListsNames = [String]()
-    var usersLists: [List]!
+    var usersLists = [List]()
     var FrigesCollectionView: UICollectionView!
     var ListCollectionView: UICollectionView!
     
@@ -212,7 +207,17 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     
     var frigeListView: UIView?
     
-    @IBOutlet var menu: UIBarButtonItem!
+    
+    @IBAction func LogoutButton(_ sender: UIBarButtonItem) {
+        do{
+            try FIRAuth.auth()?.signOut()
+            self.dismiss(animated: true, completion: nil)
+            
+        }catch let logoutError {
+            print(logoutError)
+        }
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -292,24 +297,20 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
         
-        if self.revealViewController() != nil {
-            menu.target = self.revealViewController()
-            menu.action = #selector(SWRevealViewController.revealToggle(_:))
-            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-        }
+        
         
     }
     
+
     func sendFirstFrige(){
         
         let frige = Frige(name:"Home", members: [(FIRAuth.auth()?.currentUser?.uid)!, "j0o9DGEnELOQCtfrfQ1fh8FeJCj1"], lists: ["-KWF_86Uxk-0kbQzy7G9","-KWLgC2-1fir3LeGHTzZ"])
         FIRDatabase.database().reference().child("Friges").childByAutoId().setValue(frige.toAnyObject())
         
-        
     }
     
     func ObserveUserFrige(){
-        FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
+        FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             var newFrigeNames = [String]()
 
             if let value = snapshot.value as? [String]{
@@ -318,8 +319,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                     newFrigeNames.append(frige)
                 }
             }
-            print(snapshot.value)
-            print(newFrigeNames)
+
             self.usersFrigesNames = newFrigeNames
             self.startObservingDB()
 
@@ -339,12 +339,16 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 
                 let frigeObject = Frige(snapshot: snapshot)
                 newfriges.append(frigeObject)
-                print(frigeObject.name)
+                
+                
+                
                 self.usersListsNames.append(frigeObject.name)
                 self.usersFriges = newfriges
                 
                 self.FrigesCollectionView.reloadData()
                 self.ListCollectionView.reloadData()
+                
+                print(self.usersFrigesNames)
                 
             }) { (error: Error) in
                 print(error.localizedDescription)
@@ -354,7 +358,48 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         
     }
     func handleAddFrige(){
-        let blur = UIBlurEffect(style: .light)
+        
+        let fridgeAlert = UIAlertController(title: "New Fridge", message: "Enter Your Fridge Name", preferredStyle: .alert)
+       
+        fridgeAlert.addTextField { (textField:UITextField) in
+            textField.placeholder = "Your New Fridge"
+            textField.autocapitalizationType = .words
+        }
+        fridgeAlert.addAction(UIAlertAction(title: "Create", style: .default, handler: {(UIAlertAction) in
+            if let fridgeName = fridgeAlert.textFields?.first?.text{
+                
+                let userID = (FIRAuth.auth()?.currentUser?.uid)!
+                
+                let fridge = Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
+                
+                let fridgeRef = FIRDatabase.database().reference().child("Friges").childByAutoId()
+                
+                fridgeRef.setValue(fridge.toAnyObject())
+                
+                self.usersFrigesNames.append(fridgeRef.key)
+                
+                FIRDatabase.database().reference().child("Users").child(userID).child("friges").setValue([self.usersFrigesNames.description])
+                self.FrigesCollectionView.reloadData()
+            }
+            
+        }))
+        
+        fridgeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            fridgeAlert.dismiss(animated:false, completion: nil)
+        }))
+        
+        self.present(fridgeAlert, animated: true, completion: nil)
+
+        
+        /*
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(r: 75, g: 75, b: 75)
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.frame = self.view.bounds
+
+        //self.view.addSubview(backgroundView)
+       
+        let blur = UIBlurEffect(style: .dark)
         let blurView = UIVisualEffectView(effect: blur)
         blurView.frame = self.view.bounds
         self.view.addSubview(blurView)
@@ -362,7 +407,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         let cancelButton = createCancelButton()
         blurView.contentView.addSubview(cancelButton)
         
-        cancelButton.topAnchor.constraint(equalTo: (self.navigationController?.navigationBar.bottomAnchor)!, constant: 24).isActive = true
+        cancelButton.topAnchor.constraint(equalTo: blurView.topAnchor, constant: 24).isActive = true
         cancelButton.rightAnchor.constraint(equalTo: blurView.rightAnchor, constant: -24).isActive = true
         cancelButton.widthAnchor.constraint(equalTo: blurView.widthAnchor, multiplier: 1/9).isActive = true
         cancelButton.heightAnchor.constraint(equalTo: blurView.heightAnchor, multiplier: 1/15).isActive = true
@@ -384,6 +429,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         let nameLabel = createNewNameLabel()
         containerView.addSubview(nameLabel)
         setNewNameLabel(label: nameLabel, superview: containerView)
+        */
     }
     
     func createNewNameLabel() -> UILabel {

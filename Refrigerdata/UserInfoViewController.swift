@@ -101,15 +101,21 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         label.text = "Refrigerdata"
         label.textColor =  UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
-        //label.font = UIFont.boldSystemFont(ofSize: 32)
         label.textAlignment = .center
         return label
     }()
     
     func textFieldShouldBeginEditing(_ state: UITextField) -> Bool {
         inputsContainerViewYAnchor?.isActive = false
-        inputsContainerView.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -85).isActive = true
+        inputsContainerViewYAnchor = inputsContainerView.topAnchor.constraint(equalTo: refridgerdata.bottomAnchor, constant: 35)
+        inputsContainerViewYAnchor?.isActive = true
         
+        UIView.animate(withDuration: 1.0, delay: 0.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.2, options: [.curveEaseOut], animations: {
+            self.view.layoutIfNeeded()
+        }) { (completed) in
+            
+        }
+
         return true
     }
     
@@ -157,12 +163,15 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         
         if FIRAuth.auth()?.currentUser?.uid != nil {
             self.performSegue(withIdentifier:"Login", sender: self)
+            
         }else{
             print("User is not logged in")
-            
+            let tapOutsideOfTextField = UITapGestureRecognizer(target: self, action: #selector(dissmissKeyboard))
+            self.view.addGestureRecognizer(tapOutsideOfTextField)
         }
-        
     }
+    
+    
 
     func setRefridgerdata(){
         
@@ -270,7 +279,8 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: {
+            (user: FIRUser?, error: Error?) in
             if error != nil{
                 print(error)
                 return
@@ -349,17 +359,35 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         passwordSeparatorView.heightAnchor.constraint(equalToConstant:1).isActive = true
         
     }
-
- 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    func dissmissKeyboard(){
+        
+        if nameTextField.isEditing || emailTextField.isEditing || passwordTextField.isEditing {
+            inputsContainerViewYAnchor?.isActive = false
+            inputsContainerViewYAnchor = inputsContainerView.centerYAnchor.constraint(equalTo:view.centerYAnchor)
+            inputsContainerViewYAnchor?.isActive = true
+            nameTextField.resignFirstResponder()
+            emailTextField.resignFirstResponder()
+            passwordTextField.resignFirstResponder()
+            
+            UIView.animate(withDuration: 1.25, delay: 0.0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.2, options: [.curveEaseOut], animations: {
+                self.view.layoutIfNeeded()
+            }) { (completed) in
+                
+            }
+        }
+        
+//        if nameTextField.isEditing {
+//            nameTextField.resignFirstResponder()
+//            return
+//        }else if emailTextField.isEditing {
+//            emailTextField.resignFirstResponder()
+//            return
+//        }else if passwordTextField.isEditing {
+//            passwordTextField.resignFirstResponder()
+//        }
+        
     }
-    */
 
 }
 

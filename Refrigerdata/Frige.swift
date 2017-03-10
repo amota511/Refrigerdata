@@ -14,7 +14,7 @@ struct Frige {
     let key:String!
     let name:String!
     let members: [String]?
-    let lists: [String]?
+    var lists = [String]()
     let itemRef:FIRDatabaseReference?
     
     init(name:String, members:[String], key:String = "", lists:[String]) {
@@ -45,13 +45,13 @@ struct Frige {
         if let frigeList = value?["lists"] as? [String]{
             lists = frigeList
         }else{
-            lists = nil
+            //lists = nil
         }
         
     
     }
  
     func toAnyObject()-> [String : AnyObject] {
-        return["name":name as AnyObject, "members": members! as AnyObject, "lists": lists! as AnyObject]
+        return["name":name as AnyObject, "members": members! as AnyObject, "lists": lists as AnyObject]
     }
 }
