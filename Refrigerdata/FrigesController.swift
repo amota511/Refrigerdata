@@ -226,6 +226,13 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         ObserveUserFrige()
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
         
+        setUpFridge()
+        setUpList()
+        
+    }
+    
+    func setUpFridge() {
+        
         let FrigeLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         FrigeLayout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 0, right: 10)
         FrigeLayout.itemSize = CGSize(width: view.frame.width * (1/3), height: view.frame.height * (1/3) * (3/4))
@@ -248,7 +255,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         self.view.addSubview(FrigesCollectionView)
         
         //FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1)
-
+        
         self.view.addSubview(FrigesLabel)
         FrigesLabel.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
         FrigesLabel.bottomAnchor.constraint(equalTo:FrigesCollectionView.topAnchor, constant: -5).isActive = true
@@ -260,14 +267,15 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         addFrigeButton.topAnchor.constraint(equalTo:FrigesCollectionView.bottomAnchor, constant: -8).isActive = true
         addFrigeButton.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 15/16).isActive = true
         addFrigeButton.heightAnchor.constraint(equalTo:FrigesCollectionView.heightAnchor, multiplier: 1/6).isActive = true
-        
-        
+    }
+    
+    func setUpList() {
         
         let ListLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         ListLayout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         ListLayout.itemSize = CGSize(width: view.frame.width * (1/3), height: view.frame.height * (1/3) * (3/4))
         ListLayout.scrollDirection = .horizontal
- 
+        
         ListCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/4.5) + FrigesCollectionView.frame.height * 1.00, width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: ListLayout)
         ListCollectionView.dataSource = self
         ListCollectionView.delegate = self
@@ -292,15 +300,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         addListButton.topAnchor.constraint(equalTo:ListCollectionView.bottomAnchor, constant: -8).isActive = true
         addListButton.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 15/16).isActive = true
         addListButton.heightAnchor.constraint(equalTo:ListCollectionView.heightAnchor, multiplier: 1/6).isActive = true
-        
-        
-        //self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        //self.navigationController?.navigationBar.barTintColor = UIColor(r: 100, g: 200, b: 100)
-        
-        
-        
     }
-    
 
     func sendFirstFrige(){
         
@@ -378,7 +378,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 
                 self.usersFrigesNames.append(fridgeRef.key)
                 
-                FIRDatabase.database().reference().child("Users").child(userID).child("friges").setValue([self.usersFrigesNames.description])
+                FIRDatabase.database().reference().child("Users").child(userID).child("friges").setValue(self.usersFrigesNames)
                 self.FrigesCollectionView.reloadData()
             }
             
@@ -531,8 +531,10 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     }
     
     func handleAddList()  {
+        let addList = AddListVC()
         
-        
+        self.parent!.addChildViewController(addList)
+        self.parent!.view.addSubview(addList.view)
     }
     
     

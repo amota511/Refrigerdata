@@ -190,35 +190,35 @@ class Sweets: UITableViewController {
         let cell = tableView.cellForRow(at: indexPath as IndexPath) as! RefrigerdataCell
         
         if rowIsSelected == false {
-        cell.backgroundColor = UIColor(r: 120, g: 220, b: 120)
-        cell.item.textColor = UIColor.white
-        cell.detail.textColor = UIColor.white
-        
-        cell.addSubview(coverView)
-        coverView.addSubview(ownItButton)
-        coverView.addSubview(checkButton)
-        coverView.addSubview(deleteButton)
+            cell.backgroundColor = UIColor(r: 120, g: 220, b: 120)
+            cell.item.textColor = UIColor.white
+            cell.detail.textColor = UIColor.white
             
-        coverView.leftAnchor.constraint(equalTo:cell.centerXAnchor, constant: -10).isActive = true
-        coverView.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-        coverView.rightAnchor.constraint(equalTo:cell.rightAnchor).isActive = true
-        coverView.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
-        
-        ownItButton.leftAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
-        ownItButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-        ownItButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
-        ownItButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
-        
-        checkButton.leftAnchor.constraint(equalTo:ownItButton.rightAnchor, constant: 2).isActive = true
-        checkButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-        checkButton.rightAnchor.constraint(equalTo:deleteButton.leftAnchor, constant: -2).isActive = true
-        checkButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
-        
-        deleteButton.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
-        deleteButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-        deleteButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
-        deleteButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
-        rowIsSelected = true
+            cell.addSubview(coverView)
+            coverView.addSubview(ownItButton)
+            coverView.addSubview(checkButton)
+            coverView.addSubview(deleteButton)
+            
+            coverView.leftAnchor.constraint(equalTo:cell.centerXAnchor, constant: -10).isActive = true
+            coverView.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+            coverView.rightAnchor.constraint(equalTo:cell.rightAnchor).isActive = true
+            coverView.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
+            
+            ownItButton.leftAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
+            ownItButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+            ownItButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
+            ownItButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
+            
+            checkButton.leftAnchor.constraint(equalTo:ownItButton.rightAnchor, constant: 2).isActive = true
+            checkButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+            checkButton.rightAnchor.constraint(equalTo:deleteButton.leftAnchor, constant: -2).isActive = true
+            checkButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
+            
+            deleteButton.rightAnchor.constraint(equalTo:cell.rightAnchor, constant: -2).isActive = true
+            deleteButton.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+            deleteButton.widthAnchor.constraint(equalTo:cell.widthAnchor, multiplier: 1/7).isActive = true
+            deleteButton.heightAnchor.constraint(equalTo:cell.heightAnchor, multiplier: 3/4).isActive = true
+            rowIsSelected = true
             
         }else{
             

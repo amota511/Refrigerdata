@@ -23,6 +23,7 @@
 		1A81E10B1D63EBD90026D1D5 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A81E10A1D63EBD90026D1D5 /* SettingsController.swift */; };
 		1A81E10D1D6A77430026D1D5 /* Frige.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A81E10C1D6A77430026D1D5 /* Frige.swift */; };
 		1A81E10F1D6A781A0026D1D5 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A81E10E1D6A78190026D1D5 /* List.swift */; };
+		1AB529961E72835700B81185 /* AddListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB529951E72835600B81185 /* AddListVC.swift */; };
 		1AD72B831E11E1FE003C8DDA /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1AD72B821E11E1FE003C8DDA /* OFL.txt */; };
 		1AD72B841E11E20B003C8DDA /* Lobster-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AD72B811E11E1F5003C8DDA /* Lobster-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,7 @@
 		1A81E10A1D63EBD90026D1D5 /* SettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		1A81E10C1D6A77430026D1D5 /* Frige.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frige.swift; sourceTree = "<group>"; };
 		1A81E10E1D6A78190026D1D5 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
+		1AB529951E72835600B81185 /* AddListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddListVC.swift; sourceTree = "<group>"; };
 		1AD72B811E11E1F5003C8DDA /* Lobster-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lobster-Regular.ttf"; sourceTree = "<group>"; };
 		1AD72B821E11E1FE003C8DDA /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		36ECAD212D62868531773067 /* Pods_Refrigerdata.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Refrigerdata.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 				1A4809581D62C39700152470 /* User.swift */,
 				1A81E1021D639AAC0026D1D5 /* RefrigerdataCell.swift */,
 				1A81E1081D63EBA60026D1D5 /* FrigesController.swift */,
+				1AB529951E72835600B81185 /* AddListVC.swift */,
 				1A81E10C1D6A77430026D1D5 /* Frige.swift */,
 				1A81E10E1D6A78190026D1D5 /* List.swift */,
 				1A81E10A1D63EBD90026D1D5 /* SettingsController.swift */,
@@ -266,6 +269,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AB529961E72835700B81185 /* AddListVC.swift in Sources */,
 				1A4809571D62C38E00152470 /* Sweets.swift in Sources */,
 				1A81E1031D639AAC0026D1D5 /* RefrigerdataCell.swift in Sources */,
 				1A48095B1D62C39C00152470 /* UserInfoViewController.swift in Sources */,
