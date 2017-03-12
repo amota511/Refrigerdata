@@ -18,7 +18,8 @@ class AddListVC: UIViewController {
     
     func createBlurView() {
         
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
         blurView.frame.origin.x = 0
         blurView.frame.origin.y = 0
         blurView.frame.size.width = self.view.bounds.width
@@ -43,24 +44,21 @@ class AddListVC: UIViewController {
         
         
         self.view.addSubview(containerView)
-        
+        animateContainerView(containerView: containerView)
         
         
         setupAddKickLabel(blurView: blurView)
         
     }
     
-    func animateContainerView(containerView: UIView, sneakerPhotosCV: UICollectionView) {
+    func animateContainerView(containerView: UIView) {
         UIView.animate(withDuration: 1.5, delay: 0.0, usingSpringWithDamping: 3.5, initialSpringVelocity: 0.5, options: [.curveEaseInOut] , animations: {
             
             containerView.frame.size.height = CGFloat(self.view.frame.width * 0.95)
             containerView.center = self.view.center
-            sneakerPhotosCV.bounds.origin.x = 0
-            sneakerPhotosCV.bounds.origin.y = 0
-            sneakerPhotosCV.frame.size.width = containerView.bounds.width
-            sneakerPhotosCV.frame.size.height = containerView.bounds.height * (1/1.5)
             
-            self.addPhotoViewDescriptionLabel(containerView: containerView, collectionView: sneakerPhotosCV)
+            
+            //self.addPhotoViewDescriptionLabel(containerView: containerView, collectionView: sneakerPhotosCV)
         }) { (completion) in
             
         }

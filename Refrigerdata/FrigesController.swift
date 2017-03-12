@@ -58,13 +58,13 @@ extension FrigesController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if collectionView.restorationIdentifier == "Friges"{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrigeCell", for: indexPath) as! FrigeCell
             
             cell.backgroundColor = UIColor.white
             cell.clipsToBounds = true
             cell.layer.cornerRadius = 5
             
-            let frigeTitle = UILabel()
+            let frigeTitle = cell.nameLabel
 
             if let title = self.usersFriges?[indexPath.row] {
                 
@@ -76,27 +76,34 @@ extension FrigesController: UICollectionViewDataSource {
                 
                 cell.addSubview(frigeTitle)
                 
-                frigeTitle.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
-                frigeTitle.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
+                frigeTitle.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+                frigeTitle.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
                 frigeTitle.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1/5).isActive = true
                 frigeTitle.widthAnchor.constraint(equalTo: cell.widthAnchor).isActive = true
             }
             
-            let FrigeImage = UIImageView()
+            let FrigeImage = UIButton()
             FrigeImage.contentMode = .scaleAspectFit
             FrigeImage.translatesAutoresizingMaskIntoConstraints = false
-            //FrigeImage.image = #imageLiteral(resourceName: "silver_frige1")
-            
+            FrigeImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
+            FrigeImage.addTarget(self, action: #selector(editFrige), for: .touchUpInside)
             cell.addSubview(FrigeImage)
             
-            FrigeImage.centerXAnchor.constraint(equalTo:cell.centerXAnchor).isActive = true
-            FrigeImage.centerYAnchor.constraint(equalTo:cell.centerYAnchor).isActive = true
-            FrigeImage.widthAnchor.constraint(equalTo:cell.widthAnchor).isActive = true
-            FrigeImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
+            FrigeImage.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
+            FrigeImage.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 5).isActive = true
+            FrigeImage.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
+            FrigeImage.heightAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
             
             
             cell.bringSubview(toFront: frigeTitle)
 
+            
+            if indexPath.row == usersFriges.count - 1 {
+                collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: [])
+                
+                //CollectionView(collectionView: collectionView, shouldSelectItemAt: IndexPath(item: 0, section: 0))
+                //collectionView(<#T##collectionView: UICollectionView##UICollectionView#>, shouldSelectItemAt: <#T##IndexPath#>)
+            }
             return cell
         }
         else{
@@ -140,8 +147,14 @@ extension FrigesController: UICollectionViewDataSource {
             listImage.heightAnchor.constraint(equalTo:cell.heightAnchor).isActive = true
             
             cell.bringSubview(toFront: listTitle)
+            
+            
             return cell
         }
+    }
+    
+    func editFrige() {
+        
     }
 }
 
@@ -208,6 +221,8 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     var frigeListView: UIView?
     
     
+    @IBOutlet var logoutButtonImage: UIBarButtonItem!
+    
     @IBAction func LogoutButton(_ sender: UIBarButtonItem) {
         do{
             try FIRAuth.auth()?.signOut()
@@ -225,10 +240,10 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         dbRef = FIRDatabase.database().reference().child("Friges")
         ObserveUserFrige()
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
-        
+        //logoutButtonImage.setima
         setUpFridge()
         setUpList()
-        
+        //self.navigationController?.navigationBar.
     }
     
     func setUpFridge() {
@@ -243,7 +258,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/13.5), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
         FrigesCollectionView.dataSource = self
         FrigesCollectionView.delegate = self
-        FrigesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "FrigeCell")
+        FrigesCollectionView.register(FrigeCell.self, forCellWithReuseIdentifier: "FrigeCell")
         FrigesCollectionView.isScrollEnabled = true
         FrigesCollectionView.backgroundColor = UIColor(r: 85, g: 185, b: 85)
         FrigesCollectionView.showsHorizontalScrollIndicator = false
@@ -331,24 +346,25 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     
     func startObservingDB(){
         
-        var newfriges = [Frige]()
+        self.usersFriges = [Frige]()
         
         for frige in self.usersFrigesNames {
             
             FIRDatabase.database().reference().child("Friges").child(frige).observe(.value, with: { (snapshot:FIRDataSnapshot) in
                 
                 let frigeObject = Frige(snapshot: snapshot)
-                newfriges.append(frigeObject)
+                self.usersFriges.append(frigeObject)
                 
                 
                 
                 self.usersListsNames.append(frigeObject.name)
-                self.usersFriges = newfriges
+                //self.usersFriges = newfriges
+                
                 
                 self.FrigesCollectionView.reloadData()
                 self.ListCollectionView.reloadData()
                 
-                print(self.usersFrigesNames)
+                print(frigeObject.name)
                 
             }) { (error: Error) in
                 print(error.localizedDescription)
@@ -379,7 +395,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 self.usersFrigesNames.append(fridgeRef.key)
                 
                 FIRDatabase.database().reference().child("Users").child(userID).child("friges").setValue(self.usersFrigesNames)
-                self.FrigesCollectionView.reloadData()
+                //self.FrigesCollectionView.reloadData()
             }
             
         }))
