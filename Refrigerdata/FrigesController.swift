@@ -18,7 +18,12 @@ extension FrigesController: UICollectionViewDataSource {
         
         
         if collectionView.restorationIdentifier == "Friges"{
-
+            let cell = collectionView.cellForItem(at: indexPath) as! FrigeCell
+            UIView.animate(withDuration: 0.5, animations: {
+                cell.backgroundColor = UIColor(r: 180, g: 255, b: 180) //UIColor(red: 215.0/255.0, green: 215.0/255.0, blue: 215.0/255.0, alpha: 1.0)
+                
+            })
+            
             self.usersListsNames = self.usersFriges[indexPath.row].lists
             var newlistArray = [List]()
             for listName in self.usersListsNames {
@@ -39,6 +44,18 @@ extension FrigesController: UICollectionViewDataSource {
         }
         
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
+        if collectionView.restorationIdentifier == "Friges"{
+            let cell = collectionView.cellForItem(at: indexPath) as! FrigeCell
+            UIView.animate(withDuration: 0.5, animations: {
+                cell.backgroundColor = UIColor.white
+            })
+        }
+        
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.restorationIdentifier == "Friges"{
@@ -89,6 +106,7 @@ extension FrigesController: UICollectionViewDataSource {
             FrigeImage.addTarget(self, action: #selector(editFrige), for: .touchUpInside)
             cell.addSubview(FrigeImage)
             
+            FrigeImage.imageView?.tintColor = UIColor.white
             FrigeImage.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
             FrigeImage.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 5).isActive = true
             FrigeImage.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
@@ -98,12 +116,8 @@ extension FrigesController: UICollectionViewDataSource {
             cell.bringSubview(toFront: frigeTitle)
 
             
-            if indexPath.row == usersFriges.count - 1 {
-                collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: [])
-                
-                //CollectionView(collectionView: collectionView, shouldSelectItemAt: IndexPath(item: 0, section: 0))
-                //collectionView(<#T##collectionView: UICollectionView##UICollectionView#>, shouldSelectItemAt: <#T##IndexPath#>)
-            }
+            
+            
             return cell
         }
         else{
@@ -154,8 +168,10 @@ extension FrigesController: UICollectionViewDataSource {
     }
     
     func editFrige() {
-        
+        print("Edit Fridge button tapped")
     }
+    
+    
 }
 
 class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
@@ -219,7 +235,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     }()
     
     var frigeListView: UIView?
-    
+    var shouldSelectFirstItem = false
     
     @IBOutlet var logoutButtonImage: UIBarButtonItem!
     
@@ -234,16 +250,46 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         
     }
     
+    func logout() {
+        do{
+            try FIRAuth.auth()?.signOut()
+            self.dismiss(animated: true, completion: nil)
+            
+        }catch let logoutError {
+            print(logoutError)
+        }
+    }
+    
+    func tutorial() {
+        
+        print("Tutorial button was pressed.")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         dbRef = FIRDatabase.database().reference().child("Friges")
         ObserveUserFrige()
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
-        //logoutButtonImage.setima
+        
+        
+        let rightButton: UIButton = UIButton(type: .system)
+        rightButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        rightButton.setImage(#imageLiteral(resourceName: "Question_Mark"), for: UIControlState.normal)
+        rightButton.addTarget(self, action: #selector(tutorial), for: UIControlEvents.touchUpInside)
+        let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: rightButton)
+        self.navigationItem.setRightBarButton(rightBarButtonItem, animated: false)
+        
+        let leftButton: UIButton = UIButton(type: .system)
+        leftButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        leftButton.setImage(#imageLiteral(resourceName: "white_gear"), for: UIControlState.normal)
+        leftButton.addTarget(self, action: #selector(logout), for: UIControlEvents.touchUpInside)
+        let leftBarButtonIten: UIBarButtonItem = UIBarButtonItem(customView: leftButton)
+        self.navigationItem.setLeftBarButton(leftBarButtonIten, animated: false)
+       
         setUpFridge()
         setUpList()
-        //self.navigationController?.navigationBar.
+        self.navigationController?.navigationBar.tintColor = UIColor.white
     }
     
     func setUpFridge() {
@@ -341,7 +387,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         }) { (error: Error) in
             print(error.localizedDescription)
         }
-
+        
     }
     
     func startObservingDB(){
@@ -371,7 +417,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
             }
             
         }
-        
+        shouldSelectFirstItem = true
     }
     func handleAddFrige(){
         

@@ -155,6 +155,6 @@
     </scenes>
     <resources>
         <image name="More" width="20" height="20"/>
-        <image name="white_gear" width="512" height="512"/>
+        <image name="white_gear" width="256" height="256"/>
     </resources>
 </document>

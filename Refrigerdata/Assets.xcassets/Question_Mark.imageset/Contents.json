@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "Question_Mark.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "white_gear.png",
       "scale" : "2x"
     },
     {
