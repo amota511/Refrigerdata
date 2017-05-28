@@ -726,8 +726,10 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                     print("List should now be added to the fridges list of lists")
                 }
                 print("List should now be created")
+                
                 self.ListCollectionView.reloadData()
                 //self.FrigesCollectionView.reloadData()
+                self.ObserveUserFrige()
             }
             
             
