@@ -200,19 +200,33 @@ extension FrigesController: UICollectionViewDataSource {
             if let memberName = addMemberAlert.textFields?.first?.text{
                 
 //                let userID = (FIRAuth.auth()?.currentUser?.uid)!
-//                
+                
 //                let fridge = Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
-//                
-                FIRDatabase.database().reference().child("Emails").child(memberName).observeSingleEvent(of: FIRDataEventType.value, with: { (snapshot) in
-                    if snapshot != nil {
+                
+                FIRDatabase.database().reference().child("Emails").child(memberName.replacingOccurrences(of: ".com", with: "")).observeSingleEvent(of: FIRDataEventType.value, with: { (snapshot) in
+                    if snapshot.value != nil {
                         let uid = snapshot.value as! String
                         let fridge = self.usersFriges[self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row]
-                        FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue(fridge.key)
+                        FIRDatabase.database().reference().child("Users").child(uid).child("friges").observeSingleEvent(of: .value, with: { (snap) in
+                            
+                            if let friges = snap.value as? [String] {
+                                var usersAccessibleFridges = friges
+                                usersAccessibleFridges.append(fridge.key)
+                                FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue(usersAccessibleFridges)
+                            } else {
+                                FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue([fridge.key])
+                            }
+                            
+                        })
+                        FIRDatabase.database().reference().child("Friges").child(fridge.key).child("members").observeSingleEvent(of: .value, with: { (snap) in
+                            
+                            var membs = snap.value as! [String]
+                            membs.append(uid)
+                            FIRDatabase.database().reference().child("Friges").child(fridge.key).child("members").setValue(membs)
+                        })
                     }
                 })
-                    
-                
-                //self.FrigesCollectionView.reloadData()
+
             }
             
         }))
@@ -242,10 +256,7 @@ extension FrigesController: UICollectionViewDataSource {
                     friges.remove(at: friges.index(of: fridge.key)!)
                     FIRDatabase.database().reference().child("Users").child(member).child("friges").setValue(friges)
                 })
-                
-                
-                print(member)
-                print(fridge.key)
+
             }
             FIRDatabase.database().reference().child("Friges").child(fridge.key).removeValue()
             
@@ -391,7 +402,6 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         FrigeLayout.scrollDirection = .horizontal
         
         
-        
         FrigesCollectionView = UICollectionView(frame: CGRect(x: 0, y: view.frame.height * (1/13.5), width: view.frame.width, height: view.frame.height * (1/3.5)), collectionViewLayout: FrigeLayout)
         FrigesCollectionView.dataSource = self
         FrigesCollectionView.delegate = self
@@ -405,9 +415,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         FrigesCollectionView.bounces = true
         
         self.view.addSubview(FrigesCollectionView)
-        
-        //FrigesCollectionView.widthAnchor.constraint(equalTo:view.widthAnchor, multiplier: 1)
-        
+
         self.view.addSubview(FrigesLabel)
         FrigesLabel.centerXAnchor.constraint(equalTo:view.centerXAnchor).isActive = true
         FrigesLabel.bottomAnchor.constraint(equalTo:FrigesCollectionView.topAnchor, constant: -5).isActive = true
@@ -711,16 +719,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 if ((self.FrigesCollectionView.indexPathsForSelectedItems?.first) != nil) {
                 let fridge = self.usersFriges[(self.FrigesCollectionView.indexPathsForSelectedItems!.first!).row]
                     
-                    var lists = self.usersListsNames
-                    
-//                    FIRDatabase.database().reference().child("Friges").child(fridge.key).child("lists").observeSingleEvent(of: .value, with: { (snapshot) in
-//                        for list in snapshot.children  {
-//                            let listString = list as! FIRDataSnapshot
-//                            lists.append(listString.value as! String)
-//                            print(list)
-//                        }
-//                        
-//                    })
+                    let lists = self.usersListsNames
                     
                     FIRDatabase.database().reference().child("Friges").child(fridge.key).child("lists").setValue(lists)
                     print("List should now be added to the fridges list of lists")
@@ -728,12 +727,9 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 print("List should now be created")
                 
                 self.ListCollectionView.reloadData()
-                //self.FrigesCollectionView.reloadData()
                 self.ObserveUserFrige()
             }
-            
-            
-            
+
         }))
         
         addListAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
@@ -741,12 +737,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         }))
         
         self.present(addListAlert, animated: true, completion: nil)
-        
 
-//        let addList = AddListVC()
-//        
-//        self.parent!.addChildViewController(addList)
-//        self.parent!.view.addSubview(addList.view)
     }
     
     

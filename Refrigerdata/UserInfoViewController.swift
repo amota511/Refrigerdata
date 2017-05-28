@@ -294,8 +294,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
             let usersReference = ref.child("Users").child(uid)
             let values = [ "name" : name,
                            "email" : email,
-                           "friges" : ["RUHIUEHGI48UWRIJNEFDH", "IUH94HEIUDHIUBFD"]]
-                           as [String : Any]
+                           "friges" : []] as [String : Any]
             
             usersReference.updateChildValues( values as [NSObject : AnyObject], withCompletionBlock: { (err, ref) in
                 if err != nil {
@@ -304,6 +303,9 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
                 }
                 print("Saved user successfully into firebase db")
             })
+            
+            FIRDatabase.database().reference().child("Emails").child(email.replacingOccurrences(of: ".com", with: "")).setValue(uid)
+            
             print("Successfully registered user")
             self.performSegue(withIdentifier:"Login", sender: self)
         })
