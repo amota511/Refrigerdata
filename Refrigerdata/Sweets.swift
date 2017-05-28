@@ -98,9 +98,8 @@ class Sweets: UITableViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Lobster-Regular", size: 22)!, NSForegroundColorAttributeName : UIColor.white]
-
     }
-
+    
     func startObservingDB(){
         
         FIRDatabase.database().reference().child("Lists").child(path).child("name").observe(.value, with: { (snapshot:FIRDataSnapshot) in

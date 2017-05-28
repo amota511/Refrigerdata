@@ -33,5 +33,7 @@ struct List {
             name = ""
         }
     }
- 
+    func toAnyObject()-> [String : AnyObject] {
+        return["name":name as AnyObject]
+    }
 }

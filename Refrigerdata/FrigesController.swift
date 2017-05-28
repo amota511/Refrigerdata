@@ -48,10 +48,12 @@ extension FrigesController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
         if collectionView.restorationIdentifier == "Friges"{
-            let cell = collectionView.cellForItem(at: indexPath) as! FrigeCell
-            UIView.animate(withDuration: 0.5, animations: {
+            if let cell = collectionView.cellForItem(at: indexPath) as? FrigeCell {
+               UIView.animate(withDuration: 0.5, animations: {
                 cell.backgroundColor = UIColor.white
-            })
+            }) 
+        }
+            
         }
         
     }
@@ -99,27 +101,42 @@ extension FrigesController: UICollectionViewDataSource {
                 frigeTitle.widthAnchor.constraint(equalTo: cell.widthAnchor).isActive = true
             }
             
-            let FrigeImage = UIButton()
-            FrigeImage.contentMode = .scaleAspectFit
-            FrigeImage.translatesAutoresizingMaskIntoConstraints = false
-            FrigeImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
-            FrigeImage.addTarget(self, action: #selector(editFrige), for: .touchUpInside)
-            cell.addSubview(FrigeImage)
+            let addMemberImage = UIButton()
+            addMemberImage.contentMode = .scaleAspectFit
+            addMemberImage.translatesAutoresizingMaskIntoConstraints = false
+            addMemberImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
+            addMemberImage.addTarget(self, action: #selector(addMembersToFrige(sender:)), for: .touchUpInside)
+            cell.addSubview(addMemberImage)
             
-            FrigeImage.imageView?.tintColor = UIColor.white
-            FrigeImage.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
-            FrigeImage.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 5).isActive = true
-            FrigeImage.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
-            FrigeImage.heightAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
+            addMemberImage.tintColor = UIColor.blue
+            
+            addMemberImage.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
+            addMemberImage.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 5).isActive = true
+            addMemberImage.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
+            addMemberImage.heightAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
+            
+            
+            let deleteFrigeImage = UIButton()
+            deleteFrigeImage.contentMode = .scaleAspectFit
+            deleteFrigeImage.translatesAutoresizingMaskIntoConstraints = false
+            deleteFrigeImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
+            deleteFrigeImage.addTarget(self, action: #selector(deleteFrige(sender:)), for: .touchUpInside)
+            cell.addSubview(deleteFrigeImage)
+            
+            deleteFrigeImage.tintColor = UIColor.blue
+            
+            deleteFrigeImage.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
+            deleteFrigeImage.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
+            deleteFrigeImage.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
+            deleteFrigeImage.heightAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1/5).isActive = true
             
             
             cell.bringSubview(toFront: frigeTitle)
 
             
-            
-            
             return cell
         }
+            
         else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ListCell", for: indexPath)
             cell.backgroundColor = UIColor.white
@@ -167,10 +184,70 @@ extension FrigesController: UICollectionViewDataSource {
         }
     }
     
-    func editFrige() {
-        print("Edit Fridge button tapped")
+    func addMembersToFrige(sender: UIButton) {
+        
+            
+        let addMemberAlert = UIAlertController(title: "Add A Member", message: "Add A Member by email.", preferredStyle: .alert)
+        
+        addMemberAlert.addTextField { (textField:UITextField) in
+            textField.placeholder = "Email"
+            textField.autocapitalizationType = .words
+        }
+        addMemberAlert.addAction(UIAlertAction(title: "Add", style: .default, handler: {(UIAlertAction) in
+            if let memberName = addMemberAlert.textFields?.first?.text{
+                
+//                let userID = (FIRAuth.auth()?.currentUser?.uid)!
+//                
+//                let fridge = Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
+//                
+                FIRDatabase.database().reference().child("Emails").child(memberName).observeSingleEvent(of: FIRDataEventType.value, with: { (snapshot) in
+                    if snapshot != nil {
+                        let uid = snapshot.value as! String
+                        let fridge = self.usersFriges[self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row]
+                        FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue(fridge.key)
+                    }
+                })
+                    
+                
+                //self.FrigesCollectionView.reloadData()
+            }
+            
+        }))
+        
+        addMemberAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            addMemberAlert.dismiss(animated:false, completion: nil)
+        }))
+        
+        self.present(addMemberAlert, animated: true, completion: nil)
+
     }
     
+    func deleteFrige(sender: UIButton) {
+        
+        
+        let addMemberAlert = UIAlertController(title: "Delete Fridge", message: "Are you sure you want to delete this Fridge?", preferredStyle: .alert)
+        
+        
+        addMemberAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {(UIAlertAction) in
+            
+            let fridge = self.usersFriges[self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row]
+            let users = fridge.members
+            for member in users! {
+                FIRDatabase.database().reference().child("Users").child(member).child("friges").child(fridge.key).removeValue()
+            }
+            FIRDatabase.database().reference().child("Fridges").child(fridge.key).removeValue()
+            //self.FrigesCollectionView.reloadData()
+            
+            
+        }))
+        
+        addMemberAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            addMemberAlert.dismiss(animated:false, completion: nil)
+        }))
+        
+        self.present(addMemberAlert, animated: true, completion: nil)
+        
+    }
     
 }
 
@@ -432,7 +509,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
                 
                 let userID = (FIRAuth.auth()?.currentUser?.uid)!
                 
-                let fridge = Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
+                let fridge = Frige(name: fridgeName, members: [userID], lists: [])
                 
                 let fridgeRef = FIRDatabase.database().reference().child("Friges").childByAutoId()
                 
@@ -593,10 +670,63 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     }
     
     func handleAddList()  {
-        let addList = AddListVC()
         
-        self.parent!.addChildViewController(addList)
-        self.parent!.view.addSubview(addList.view)
+        let addListAlert = UIAlertController(title: "New List", message: "Enter Your List Name", preferredStyle: .alert)
+        
+        addListAlert.addTextField { (textField:UITextField) in
+            textField.placeholder = "Your New List"
+            textField.autocapitalizationType = .words
+        }
+        addListAlert.addAction(UIAlertAction(title: "Create", style: .default, handler: {(UIAlertAction) in
+            if let listName = addListAlert.textFields?.first?.text{
+                
+                //let userID = (FIRAuth.auth()?.currentUser?.uid)!
+                
+                let list = List(name: listName) //Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
+                
+                let listRef = FIRDatabase.database().reference().child("Lists").childByAutoId()
+                
+                listRef.setValue(list.toAnyObject())
+                
+                self.usersListsNames.append(listRef.key)
+                self.usersLists.append(list)
+                if ((self.FrigesCollectionView.indexPathsForSelectedItems?.first) != nil) {
+                let fridge = self.usersFriges[(self.FrigesCollectionView.indexPathsForSelectedItems!.first!).row]
+                    
+                    var lists = self.usersListsNames
+                    
+//                    FIRDatabase.database().reference().child("Friges").child(fridge.key).child("lists").observeSingleEvent(of: .value, with: { (snapshot) in
+//                        for list in snapshot.children  {
+//                            let listString = list as! FIRDataSnapshot
+//                            lists.append(listString.value as! String)
+//                            print(list)
+//                        }
+//                        
+//                    })
+                    
+                    FIRDatabase.database().reference().child("Friges").child(fridge.key).child("lists").setValue(lists)
+                    print("List should now be added to the fridges list of lists")
+                }
+                print("List should now be created")
+                self.ListCollectionView.reloadData()
+                //self.FrigesCollectionView.reloadData()
+            }
+            
+            
+            
+        }))
+        
+        addListAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            addListAlert.dismiss(animated:false, completion: nil)
+        }))
+        
+        self.present(addListAlert, animated: true, completion: nil)
+        
+
+//        let addList = AddListVC()
+//        
+//        self.parent!.addChildViewController(addList)
+//        self.parent!.view.addSubview(addList.view)
     }
     
     
