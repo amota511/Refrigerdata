@@ -51,9 +51,12 @@ extension FrigesController: UICollectionViewDataSource {
             if let cell = collectionView.cellForItem(at: indexPath) as? FrigeCell {
                UIView.animate(withDuration: 0.5, animations: {
                 cell.backgroundColor = UIColor.white
-            }) 
-        }
+            })
             
+        }
+            self.usersLists = []
+            self.usersListsNames = []
+            self.ListCollectionView.reloadData()
         }
         
     }
@@ -84,7 +87,7 @@ extension FrigesController: UICollectionViewDataSource {
             cell.layer.cornerRadius = 5
             
             let frigeTitle = cell.nameLabel
-
+            
             if let title = self.usersFriges?[indexPath.row] {
                 
                 frigeTitle.text = title.name
@@ -217,7 +220,6 @@ extension FrigesController: UICollectionViewDataSource {
         addMemberAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
             addMemberAlert.dismiss(animated:false, completion: nil)
         }))
-        
         self.present(addMemberAlert, animated: true, completion: nil)
 
     }
@@ -225,27 +227,39 @@ extension FrigesController: UICollectionViewDataSource {
     func deleteFrige(sender: UIButton) {
         
         
-        let addMemberAlert = UIAlertController(title: "Delete Fridge", message: "Are you sure you want to delete this Fridge?", preferredStyle: .alert)
+        let deleteFrigeAlert = UIAlertController(title: "Delete Fridge", message: "Are you sure you want to delete this Fridge?", preferredStyle: .alert)
         
         
-        addMemberAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {(UIAlertAction) in
+        deleteFrigeAlert.addAction(UIAlertAction(title: "Delete", style: .default, handler: {(action) in
             
-            let fridge = self.usersFriges[self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row]
+            let indexPathRow = self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row
+            let fridge = self.usersFriges[indexPathRow]
             let users = fridge.members
             for member in users! {
-                FIRDatabase.database().reference().child("Users").child(member).child("friges").child(fridge.key).removeValue()
+                var friges = [String]()
+                FIRDatabase.database().reference().child("Users").child(member).child("friges").observeSingleEvent(of: .value, with: { (snapshot) in
+                    friges = snapshot.value as! [String]
+                    friges.remove(at: friges.index(of: fridge.key)!)
+                    FIRDatabase.database().reference().child("Users").child(member).child("friges").setValue(friges)
+                })
+                
+                
+                print(member)
+                print(fridge.key)
             }
-            FIRDatabase.database().reference().child("Fridges").child(fridge.key).removeValue()
-            //self.FrigesCollectionView.reloadData()
+            FIRDatabase.database().reference().child("Friges").child(fridge.key).removeValue()
             
+            self.usersFrigesNames.remove(at: indexPathRow)
+            self.usersFriges.remove(at: indexPathRow)
+            self.FrigesCollectionView.reloadData()
             
         }))
         
-        addMemberAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
-            addMemberAlert.dismiss(animated:false, completion: nil)
+        deleteFrigeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+            deleteFrigeAlert.dismiss(animated:false, completion: nil)
         }))
         
-        self.present(addMemberAlert, animated: true, completion: nil)
+        self.present(deleteFrigeAlert, animated: true, completion: nil)
         
     }
     
@@ -448,16 +462,17 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     }
     
     func ObserveUserFrige(){
+        
         FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observe(.value, with: { (snapshot:FIRDataSnapshot) in
             var newFrigeNames = [String]()
-
-            if let value = snapshot.value as? [String]{
-                
-                for frige in value {
-                    newFrigeNames.append(frige)
+            
+            for frige in snapshot.children  {
+                if let frigeName = (frige as! FIRDataSnapshot).value {
+                    
+                    newFrigeNames.append(frigeName as! String)
+                    
                 }
             }
-
             self.usersFrigesNames = newFrigeNames
             self.startObservingDB()
 
@@ -670,6 +685,9 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     }
     
     func handleAddList()  {
+        
+        if ((self.FrigesCollectionView.indexPathsForSelectedItems?.first) == nil) { return }
+        
         
         let addListAlert = UIAlertController(title: "New List", message: "Enter Your List Name", preferredStyle: .alert)
         
