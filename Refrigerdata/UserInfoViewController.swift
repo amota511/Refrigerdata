@@ -266,6 +266,11 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
                 print(error!)
+                let invalidLoginCredentialsAlert = UIAlertController(title: "Something Went Wrong", message: "Could Not Login With This Information", preferredStyle: .alert)
+                invalidLoginCredentialsAlert.addAction(UIAlertAction(title: "Try Again", style: .cancel, handler: { (UIAlertAction) in
+                    invalidLoginCredentialsAlert.dismiss(animated:false, completion: nil)
+                }))
+                self.present(invalidLoginCredentialsAlert, animated: true, completion: nil)
                 return
             }
             print("Successfully logged in user")
@@ -282,7 +287,11 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: {
             (user: FIRUser?, error: Error?) in
             if error != nil{
-                print(error)
+                 let CouldNotRegisterAlert = UIAlertController(title: "Something Went Wrong", message: "Could Not Create User With This Information", preferredStyle: .alert)
+                 CouldNotRegisterAlert.addAction(UIAlertAction(title: "Try Again", style: .cancel, handler: { (UIAlertAction) in
+                    CouldNotRegisterAlert.dismiss(animated:false, completion: nil)
+                }))
+                self.present(CouldNotRegisterAlert, animated: true, completion: nil)
                 return
             }
             

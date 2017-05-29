@@ -107,7 +107,7 @@ extension FrigesController: UICollectionViewDataSource {
             let addMemberImage = UIButton()
             addMemberImage.contentMode = .scaleAspectFit
             addMemberImage.translatesAutoresizingMaskIntoConstraints = false
-            addMemberImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
+            addMemberImage.setImage(#imageLiteral(resourceName: "grey_plus"), for: .normal)
             addMemberImage.addTarget(self, action: #selector(addMembersToFrige(sender:)), for: .touchUpInside)
             cell.addSubview(addMemberImage)
             
@@ -122,7 +122,7 @@ extension FrigesController: UICollectionViewDataSource {
             let deleteFrigeImage = UIButton()
             deleteFrigeImage.contentMode = .scaleAspectFit
             deleteFrigeImage.translatesAutoresizingMaskIntoConstraints = false
-            deleteFrigeImage.setImage(#imageLiteral(resourceName: "Mini-pencil-icon"), for: .normal)
+            deleteFrigeImage.setImage(#imageLiteral(resourceName: "grey_minus"), for: .normal)
             deleteFrigeImage.addTarget(self, action: #selector(deleteFrige(sender:)), for: .touchUpInside)
             cell.addSubview(deleteFrigeImage)
             
@@ -189,22 +189,36 @@ extension FrigesController: UICollectionViewDataSource {
     
     func addMembersToFrige(sender: UIButton) {
         
-            
+        
         let addMemberAlert = UIAlertController(title: "Add A Member", message: "Add A Member by email.", preferredStyle: .alert)
         
         addMemberAlert.addTextField { (textField:UITextField) in
             textField.placeholder = "Email"
             textField.autocapitalizationType = .words
         }
-        addMemberAlert.addAction(UIAlertAction(title: "Add", style: .default, handler: {(UIAlertAction) in
+        addMemberAlert.addAction(UIAlertAction(title: "Add", style: .default, handler: {(Action) in
             if let memberName = addMemberAlert.textFields?.first?.text{
                 
-//                let userID = (FIRAuth.auth()?.currentUser?.uid)!
-                
-//                let fridge = Frige(name: fridgeName, members: [userID], lists: ["-KWLgC2-1fir3LeGHTzZ"])
-                
+                if (memberName == "" || memberName.contains("#") || memberName.contains("$") || memberName.contains("[") || memberName.contains("]")){
+                    let invalidEmailCredentialsAlert = UIAlertController(title: "Something Went Wrong", message: "No User Found With This Information", preferredStyle: .alert)
+                    
+                    invalidEmailCredentialsAlert.addAction(UIAlertAction(title: "Try Again", style: .cancel, handler: { (alert) in
+                        invalidEmailCredentialsAlert.dismiss(animated:false, completion: nil)
+                    }))
+                    self.present(invalidEmailCredentialsAlert, animated: true, completion: nil)
+                    return
+                }
                 FIRDatabase.database().reference().child("Emails").child(memberName.replacingOccurrences(of: ".com", with: "")).observeSingleEvent(of: FIRDataEventType.value, with: { (snapshot) in
-                    if snapshot.value != nil {
+                    if snapshot.value is NSNull {
+                        let invalidEmailCredentialsAlert = UIAlertController(title: "Something Went Wrong", message: "No User Found With This Information", preferredStyle: .alert)
+                        
+                        invalidEmailCredentialsAlert.addAction(UIAlertAction(title: "Try Again", style: .cancel, handler: { (alert) in
+                            invalidEmailCredentialsAlert.dismiss(animated:false, completion: nil)
+                        }))
+                        self.present(invalidEmailCredentialsAlert, animated: true, completion: nil)
+                        
+                        
+                    } else {
                         let uid = snapshot.value as! String
                         let fridge = self.usersFriges[self.FrigesCollectionView.indexPathForItem(at: sender.superview!.frame.origin)!.row]
                         FIRDatabase.database().reference().child("Users").child(uid).child("friges").observeSingleEvent(of: .value, with: { (snap) in
@@ -213,6 +227,7 @@ extension FrigesController: UICollectionViewDataSource {
                                 var usersAccessibleFridges = friges
                                 usersAccessibleFridges.append(fridge.key)
                                 FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue(usersAccessibleFridges)
+                                self.startObservingDB()
                             } else {
                                 FIRDatabase.database().reference().child("Users").child(uid).child("friges").setValue([fridge.key])
                             }
@@ -224,9 +239,10 @@ extension FrigesController: UICollectionViewDataSource {
                             membs.append(uid)
                             FIRDatabase.database().reference().child("Friges").child(fridge.key).child("members").setValue(membs)
                         })
+
                     }
                 })
-
+                
             }
             
         }))
@@ -254,16 +270,15 @@ extension FrigesController: UICollectionViewDataSource {
                 FIRDatabase.database().reference().child("Users").child(member).child("friges").observeSingleEvent(of: .value, with: { (snapshot) in
                     friges = snapshot.value as! [String]
                     friges.remove(at: friges.index(of: fridge.key)!)
+                    self.usersFrigesNames = friges
                     FIRDatabase.database().reference().child("Users").child(member).child("friges").setValue(friges)
                 })
-
+                
             }
             FIRDatabase.database().reference().child("Friges").child(fridge.key).removeValue()
             
-            self.usersFrigesNames.remove(at: indexPathRow)
-            self.usersFriges.remove(at: indexPathRow)
-            self.FrigesCollectionView.reloadData()
             
+            //self.FrigesCollectionView.reloadData()
         }))
         
         deleteFrigeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
@@ -289,7 +304,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     
     let FrigesLabel: UILabel = {
         let lb = UILabel()
-        lb.text = "Friges"
+        lb.text = "Fridges"
         lb.textAlignment = .center
         lb.translatesAutoresizingMaskIntoConstraints = false
         lb.textColor = UIColor.white
@@ -352,7 +367,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         
     }
     
-    func logout() {
+    @IBAction func logout() {
         do{
             try FIRAuth.auth()?.signOut()
             self.dismiss(animated: true, completion: nil)
@@ -374,20 +389,22 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         ObserveUserFrige()
         view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
         
-        
-        let rightButton: UIButton = UIButton(type: .system)
-        rightButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        rightButton.setImage(#imageLiteral(resourceName: "Question_Mark"), for: UIControlState.normal)
-        rightButton.addTarget(self, action: #selector(tutorial), for: UIControlEvents.touchUpInside)
-        let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: rightButton)
-        self.navigationItem.setRightBarButton(rightBarButtonItem, animated: false)
-        
-        let leftButton: UIButton = UIButton(type: .system)
-        leftButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        leftButton.setImage(#imageLiteral(resourceName: "white_gear"), for: UIControlState.normal)
-        leftButton.addTarget(self, action: #selector(logout), for: UIControlEvents.touchUpInside)
-        let leftBarButtonIten: UIBarButtonItem = UIBarButtonItem(customView: leftButton)
-        self.navigationItem.setLeftBarButton(leftBarButtonIten, animated: false)
+//
+//        let rightButton: UIButton = UIButton(type: .system)
+//        rightButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+//        rightButton.setImage(#imageLiteral(resourceName: "Question_Mark"), for: UIControlState.normal)
+//        rightButton.addTarget(self, action: #selector(tutorial), for: UIControlEvents.touchUpInside)
+//        let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: rightButton)
+//        self.navigationItem.setRightBarButton(rightBarButtonItem, animated: false)
+//        
+//        let leftButton: UIButton = UIButton(type: .system)
+//        leftButton.frame = CGRect(x: 0, y: 0, width: 70, height: 60)
+//        leftButton.titleLabel?.font = leftButton.titleLabel?.font.withSize(14)
+//        //leftButton.setImage(#imageLiteral(resourceName: "white_gear"), for: UIControlState.normal)
+//        leftButton.setTitle("Logout", for: .normal)
+//        leftButton.addTarget(self, action: #selector(logout), for: UIControlEvents.touchUpInside)
+//        let leftBarButtonIten: UIBarButtonItem = UIBarButtonItem(customView: leftButton)
+//        self.navigationItem.setLeftBarButton(leftBarButtonIten, animated: false)
        
         setUpFridge()
         setUpList()
@@ -462,13 +479,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         addListButton.heightAnchor.constraint(equalTo:ListCollectionView.heightAnchor, multiplier: 1/6).isActive = true
     }
 
-    func sendFirstFrige(){
-        
-        let frige = Frige(name:"Home", members: [(FIRAuth.auth()?.currentUser?.uid)!, "j0o9DGEnELOQCtfrfQ1fh8FeJCj1"], lists: ["-KWF_86Uxk-0kbQzy7G9","-KWLgC2-1fir3LeGHTzZ"])
-        FIRDatabase.database().reference().child("Friges").childByAutoId().setValue(frige.toAnyObject())
-        
-    }
-    
+
     func ObserveUserFrige(){
         
         FIRDatabase.database().reference().child("Users").child((FIRAuth.auth()?.currentUser?.uid)!).child("friges").observe(.value, with: { (snapshot:FIRDataSnapshot) in
@@ -611,23 +622,9 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         
     }
     
+
     
-    func createCancelButton() -> UIButton {
-        let cancel = UIButton(type: .system)
-        cancel.setTitle("X", for: .normal)
-        cancel.translatesAutoresizingMaskIntoConstraints = false
-        cancel.setTitleColor(UIColor.white, for: .normal)
-        cancel.addTarget(self, action: #selector(removeBlur(sender:)), for: .touchUpInside)
-        return cancel
-    }
-    
-    func removeBlur(sender: UIButton) {
-        let blurView = sender.superview?.superview
-        blurView?.removeFromSuperview()
-        print("The blur view should be removed")
-        
-    }
-    
+
     func createFrigeLstSegmentedControl(cancelButton: UIButton) -> UISegmentedControl {
         let switchControl = UISegmentedControl(items: ["Frige", "List"])
         switchControl.translatesAutoresizingMaskIntoConstraints = false
