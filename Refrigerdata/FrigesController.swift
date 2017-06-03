@@ -122,7 +122,9 @@ extension FrigesController: UICollectionViewDataSource {
             let deleteFrigeImage = UIButton()
             deleteFrigeImage.contentMode = .scaleAspectFit
             deleteFrigeImage.translatesAutoresizingMaskIntoConstraints = false
+            //deleteFrigeImage.setTitle("-", for: .normal)
             deleteFrigeImage.setImage(#imageLiteral(resourceName: "grey_minus"), for: .normal)
+            deleteFrigeImage.tintColor = UIColor.blue
             deleteFrigeImage.addTarget(self, action: #selector(deleteFrige(sender:)), for: .touchUpInside)
             cell.addSubview(deleteFrigeImage)
             
@@ -307,7 +309,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         lb.text = "Fridges"
         lb.textAlignment = .center
         lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.textColor = UIColor.white
+        lb.textColor = UIColor.black
         lb.font = lb.font.withSize(23)
         return lb
     }()
@@ -317,7 +319,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         lb.text = "Lists"
         lb.textAlignment = .center
         lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.textColor = UIColor.white
+        lb.textColor = UIColor.black
         lb.font = lb.font.withSize(23)
         return lb
     }()
@@ -387,7 +389,7 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
         
         dbRef = FIRDatabase.database().reference().child("Friges")
         ObserveUserFrige()
-        view.backgroundColor = UIColor(r: 100, g: 200, b: 100)
+        view.backgroundColor = UIColor.white //UIColor(r: 100, g: 200, b: 100)
         
 //
 //        let rightButton: UIButton = UIButton(type: .system)
