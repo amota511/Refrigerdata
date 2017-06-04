@@ -9,5 +9,4 @@ target 'Refrigerdata' do
   pod 'Firebase'
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
-  pod 'SWRevealViewController'
 end

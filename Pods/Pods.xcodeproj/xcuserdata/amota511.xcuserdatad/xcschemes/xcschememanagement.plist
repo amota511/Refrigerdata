@@ -9,20 +9,10 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SWRevealViewController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>8D36D647CFC2AA827E495B122A602F03</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>ABD35413053D3EC670B2FEDCEB2F3EC0</key>
+		<key>955D481DF4284FBF5D1E070D4B87DB3C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
