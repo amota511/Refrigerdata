@@ -31,7 +31,7 @@ struct Sweet {
     init(snapshot:FIRDataSnapshot) {
         key = snapshot.key
         itemRef = snapshot.ref
-        print(snapshot.value)
+        print(snapshot.value as Any)
         
         let value = snapshot.value as? NSDictionary
         //let username = value?["username"] as! String

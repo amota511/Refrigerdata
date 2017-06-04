@@ -363,7 +363,7 @@ class Sweets: UITableViewController {
             
             FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["owned":sweet.owned, "ownedBy": sweet.ownedBy!], withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err)
+                    print(err as Any)
                     return
                 }
             })
@@ -409,7 +409,7 @@ class Sweets: UITableViewController {
                 sweetRef.removeValue(completionBlock: { (err, ref) in
                     
                     if err != nil {
-                        print(err)
+                        print(err as Any)
                         return
                     }
                 })
@@ -431,7 +431,7 @@ class Sweets: UITableViewController {
         sweet.checked = true
         FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
-                print(err)
+                print(err as Any)
                 
                 return
             }
@@ -442,7 +442,7 @@ class Sweets: UITableViewController {
         sweet.checked = false
         FIRDatabase.database().reference().child("Lists").child(path).child("list").child(sweet.content.lowercased()).updateChildValues(["checked":sweet.checked], withCompletionBlock: { (err, ref) in
             if err != nil {
-                print(err)
+                print(err as Any)
                 return
             }
         })

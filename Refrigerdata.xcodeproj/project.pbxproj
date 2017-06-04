@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		10CEE976D6E5F86EDCC7789D /* Pods_Refrigerdata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36ECAD212D62868531773067 /* Pods_Refrigerdata.framework */; };
-		1A48093D1D62C32B00152470 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48093C1D62C32B00152470 /* MenuController.swift */; };
 		1A48094D1D62C36700152470 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48094C1D62C36700152470 /* AppDelegate.swift */; };
 		1A4809551D62C38900152470 /* Sweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4809541D62C38900152470 /* Sweet.swift */; };
 		1A4809571D62C38E00152470 /* Sweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4809561D62C38E00152470 /* Sweets.swift */; };
@@ -32,7 +31,6 @@
 /* Begin PBXFileReference section */
 		1A09ECD11DC2F92D00B4F8CE /* Refrigerdata.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Refrigerdata.entitlements; sourceTree = "<group>"; };
 		1A4809371D62C32B00152470 /* Refrigerdata.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Refrigerdata.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A48093C1D62C32B00152470 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MenuController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1A48094C1D62C36700152470 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A4809501D62C37C00152470 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A4809541D62C38900152470 /* Sweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sweet.swift; sourceTree = "<group>"; };
@@ -92,7 +90,6 @@
 			children = (
 				1A09ECD11DC2F92D00B4F8CE /* Refrigerdata.entitlements */,
 				1A48094C1D62C36700152470 /* AppDelegate.swift */,
-				1A48093C1D62C32B00152470 /* MenuController.swift */,
 				1A48095A1D62C39C00152470 /* UserInfoViewController.swift */,
 				1A4809561D62C38E00152470 /* Sweets.swift */,
 				1A4809541D62C38900152470 /* Sweet.swift */,
@@ -283,7 +280,6 @@
 				1A81E10F1D6A781A0026D1D5 /* List.swift in Sources */,
 				1A4809591D62C39700152470 /* User.swift in Sources */,
 				1A81E10B1D63EBD90026D1D5 /* SettingsController.swift in Sources */,
-				1A48093D1D62C32B00152470 /* MenuController.swift in Sources */,
 				1A4809551D62C38900152470 /* Sweet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

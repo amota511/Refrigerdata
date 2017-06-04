@@ -646,11 +646,11 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     
     func frigeListSegmentedControlSwitch(sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
-            if let frigeView = frigeListView {
+            if frigeListView != nil {
                 print(0)
             }
         }else if sender.selectedSegmentIndex == 1 {
-            if let listView = frigeListView {
+            if frigeListView != nil {
                 print(1)
             }
         }
@@ -693,7 +693,16 @@ class FrigesController: UIViewController,  UICollectionViewDelegateFlowLayout {
     
     func handleAddList()  {
         
-        if ((self.FrigesCollectionView.indexPathsForSelectedItems?.first) == nil) { return }
+        if ((self.FrigesCollectionView.indexPathsForSelectedItems?.first) == nil) {
+            
+            let selectFridgeAlert = UIAlertController(title: "Please Select A Fridge First.", message: "Select A Fridge To Add A List To It.", preferredStyle: .alert)
+            selectFridgeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (UIAlertAction) in
+                selectFridgeAlert.dismiss(animated:false, completion: nil)
+            }))
+            self.present(selectFridgeAlert, animated: true, completion: nil)
+            
+            return
+        }
         
         
         let addListAlert = UIAlertController(title: "New List", message: "Enter Your List Name", preferredStyle: .alert)

@@ -307,7 +307,7 @@ class UserInfoViewController: UIViewController, UITextFieldDelegate {
             
             usersReference.updateChildValues( values as [NSObject : AnyObject], withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err)
+                    print(err as Any)
                     return
                 }
                 print("Saved user successfully into firebase db")
